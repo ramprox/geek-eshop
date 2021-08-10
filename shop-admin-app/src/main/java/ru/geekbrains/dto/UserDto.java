@@ -1,39 +1,34 @@
-package ru.geekbrains.persist;
+package ru.geekbrains.dto;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "users")
-public class User {
+public class UserDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @NotBlank
     private String username;
 
-    @Column(nullable = false)
+    @Min(value = 18)
     private Integer age;
 
-    @Column(nullable = false)
+    @NotBlank
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    @NotBlank
+    private String matchingPassword;
 
-    public User() {
+    private Set<RoleDto> roles = new HashSet<>();
+
+    public UserDto() {
     }
 
-    public User(Long id, String username, String password, Integer age, Set<Role> roles) {
+    public UserDto(Long id, String username, Integer age, Set<RoleDto> roles) {
         this.id = id;
         this.username = username;
-        this.password = password;
         this.age = age;
         this.roles = roles;
     }
@@ -70,11 +65,19 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
+    public String getMatchingPassword() {
+        return matchingPassword;
+    }
+
+    public void setMatchingPassword(String matchingPassword) {
+        this.matchingPassword = matchingPassword;
+    }
+
+    public Set<RoleDto> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Set<RoleDto> roles) {
         this.roles = roles;
     }
 }

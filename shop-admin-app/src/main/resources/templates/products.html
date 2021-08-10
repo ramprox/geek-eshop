@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="fragments/common :: head('Products')"></head>
+    <body>
+        <div class="container">
+            <header th:replace="fragments/common :: header"/>
+            <nav th:replace="fragments/common :: navigation"></nav>
+            <div class="row py-2">
+
+                <div class="col-3 mt-3">
+                    <form class="form-group" th:method="get" th:with="name_param=${param.productNameFilter},
+                        mincost_param=${param.minCostFilter}, maxcost_param=${param.maxCostFilter}">
+                        <div th:replace="fragments/table :: filter('productNameFilter', 'Product name filter', ${name_param})"></div>
+                        <div th:replace="fragments/table :: filter('minCostFilter', 'Min cost filter', ${mincost_param})"></div>
+                        <div th:replace="fragments/table :: filter('maxCostFilter', 'Max cost filter', ${maxcost_param})"></div>
+                        <button type="submit" class="btn btn-primary mb-2">Apply</button>
+                    </form>
+                </div>
+
+                <div class="col-9 mt-3">
+                    <div sec:authorize="hasRole('ADMIN')" >
+                        <a class="btn btn-primary" th:href="@{/product/new}">Add Product</a>
+                    </div>
+                    <table class="table table-bordered my-2">
+                        <thead>
+                            <tr>
+                                <th th:replace="fragments/table :: header('Id', 'id')"></th>
+                                <th th:replace="fragments/table :: header('Name', 'name')"></th>
+                                <th th:replace="fragments/table :: header('Cost', 'cost')"></th>
+                                <th scope="col">Category</th>
+                                <th scope="col" sec:authorize="hasRole('ADMIN')">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${products.hasContent()}" th:each="product : ${products.content}">
+                                <th scope="row" th:text="${product.id}">1</th>
+                                <td th:text="${product.name}">Product 1</td>
+                                <td th:text="${product.cost}">Cost 1</td>
+                                <td th:text="${product.categoryDto.name}">Category</td>
+                                <td sec:authorize="hasRole('ADMIN')">
+                                    <a class="btn btn-success" th:href="@{product/{id}(id = ${product.id})}"><i class="fas fa-edit"></i></a>
+                                    <form class="d-inline" th:method="delete" th:action="@{/product/{id}(id = ${product.id})}">
+                                        <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:unless="${products.hasContent()}">
+                                <td colspan="4">No data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="col-12" th:if="${products.hasContent()}">
+                        <nav aria-label="...">
+                            <ul class="pagination">
+                                <li class="page-item"
+                                    th:classappend="${products.isFirst()} ? 'disabled'">
+                                    <a th:replace="fragments/table :: paging_page('Previous', ${products.number})"/>
+                                </li>
+
+                                <li class="page-item"
+                                    th:each="num : ${#numbers.sequence(1, products.totalPages)}"
+                                    th:classappend="${num == products.number + 1} ? 'active'">
+                                    <a th:replace="fragments/table :: paging_page(${num}, ${num})"/>
+                                </li>
+
+                                <li class="page-item"
+                                    th:classappend="${products.isLast()} ? 'disabled'">
+                                    <a th:replace="fragments/table :: paging_page('Next', ${products.number + 2})"/>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <th:block th:insert="fragments/common :: end_scripts"></th:block>
+</html>

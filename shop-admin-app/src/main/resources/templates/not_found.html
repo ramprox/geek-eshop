@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/common :: head('Error')"></head>
+    <body>
+        <div class="container">
+            <header th:replace="fragments/common :: header"/>
+            <nav th:replace="fragments/common :: navigation"></nav>
+            <div class="row py-2">
+                <h2 class="text-danger" th:text="${message}">Error message</h2>
+            </div>
+        </div>
+    </body>
+    <th:block th:insert="fragments/common :: end_scripts"></th:block>
+</html>
