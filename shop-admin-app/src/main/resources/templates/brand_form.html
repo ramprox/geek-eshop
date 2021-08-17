@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: head('Edit brand')"></head>
+<body>
+<div class="container">
+    <header th:replace="fragments/common :: header"/>
+    <nav th:replace="fragments/common.html :: navigation"></nav>
+    <div class="row py-2">
+        <div class="col-12">
+            <form th:action="@{/brand}" method="post" th:object="${brand}">
+                <input type="hidden" id="id" th:field="*{id}">
+                <div class="form-group">
+                    <label>Brand name</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Brand name">
+                    <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<th:block th:insert="fragments/common :: end_scripts"></th:block>
+</html>

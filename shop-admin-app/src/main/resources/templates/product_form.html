@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments/common :: head('New product')"></head>
+    <head th:replace="fragments/common :: head('Edit product')"></head>
     <body>
         <div class="container">
             <header th:replace="fragments/common :: header"/>
@@ -26,6 +26,15 @@
                                         th:text="${category.name}"
                                         th:value="${category.id} + ';' + ${category.name}"
                                         th:selected="${category.equals(product.categoryDto)}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="brands">Brand</label>
+                            <select class="form-control" id="brands" th:field="*{brandDto}" required>
+                                <option th:each="brand : ${brands}"
+                                        th:text="${brand.name}"
+                                        th:value="${brand.id} + ';' + ${brand.name}"
+                                        th:selected="${brand.equals(product.brandDto)}"></option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>

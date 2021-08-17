@@ -1,6 +1,7 @@
-package ru.geekbrains.persist;
+package ru.geekbrains.persist.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import ru.geekbrains.persist.model.Role;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package ru.geekbrains.services;
+package ru.geekbrains.interfaces;
 
 
 import ru.geekbrains.dto.RoleDto;

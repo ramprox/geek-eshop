@@ -1,4 +1,4 @@
-package ru.geekbrains.persist;
+package ru.geekbrains.persist.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,15 +11,19 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "cost")
+    @Column(name = "cost", nullable = false)
     private BigDecimal cost;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(name = "fk_products_categories_id"))
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id", nullable = false, foreignKey = @ForeignKey(name = "fk_products_brands_id"))
+    private Brand brand;
 
     public Product() {
     }
@@ -29,6 +33,14 @@ public class Product {
         this.name = name;
         this.cost = cost;
         this.category = category;
+    }
+
+    public Product(Long id, String name, BigDecimal cost, Category category, Brand brand) {
+        this.id = id;
+        this.name = name;
+        this.cost = cost;
+        this.category = category;
+        this.brand = brand;
     }
 
     public Long getId() {
@@ -61,5 +73,13 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Brand getBrand() {
+        return brand;
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
     }
 }

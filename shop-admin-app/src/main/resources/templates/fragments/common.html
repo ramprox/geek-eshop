@@ -30,6 +30,9 @@
                 <li class="nav-item active" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link" th:href="@{/category}">Categories</a>
                 </li>
+                <li class="nav-item active" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/brand}">Brands</a>
+                </li>
                 <li class="nav-item active">
                     <a class="nav-link" th:href="@{/product}">Products</a>
                 </li>

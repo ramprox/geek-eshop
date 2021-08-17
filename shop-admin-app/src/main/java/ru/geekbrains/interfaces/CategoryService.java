@@ -1,7 +1,6 @@
-package ru.geekbrains.services;
+package ru.geekbrains.interfaces;
 
 import ru.geekbrains.dto.CategoryDto;
-import ru.geekbrains.persist.Category;
 
 import java.util.List;
 import java.util.Optional;

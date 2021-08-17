@@ -18,6 +18,9 @@ public class ProductDto {
     @NotNull
     private CategoryDto categoryDto;
 
+    @NotNull
+    private BrandDto brandDto;
+
     public ProductDto() {
     }
 
@@ -58,5 +61,13 @@ public class ProductDto {
 
     public void setCategoryDto(CategoryDto categoryDto) {
         this.categoryDto = categoryDto;
+    }
+
+    public BrandDto getBrandDto() {
+        return brandDto;
+    }
+
+    public void setBrandDto(BrandDto brandDto) {
+        this.brandDto = brandDto;
     }
 }

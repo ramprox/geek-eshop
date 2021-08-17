@@ -30,6 +30,7 @@
                                 <th th:replace="fragments/table :: header('Name', 'name')"></th>
                                 <th th:replace="fragments/table :: header('Cost', 'cost')"></th>
                                 <th scope="col">Category</th>
+                                <th scope="col">Brand</th>
                                 <th scope="col" sec:authorize="hasRole('ADMIN')">Actions</th>
                             </tr>
                         </thead>
@@ -39,6 +40,7 @@
                                 <td th:text="${product.name}">Product 1</td>
                                 <td th:text="${product.cost}">Cost 1</td>
                                 <td th:text="${product.categoryDto.name}">Category</td>
+                                <td th:text="${product.brandDto.name}">Brand</td>
                                 <td sec:authorize="hasRole('ADMIN')">
                                     <a class="btn btn-success" th:href="@{product/{id}(id = ${product.id})}"><i class="fas fa-edit"></i></a>
                                     <form class="d-inline" th:method="delete" th:action="@{/product/{id}(id = ${product.id})}">

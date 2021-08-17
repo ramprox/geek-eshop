@@ -1,4 +1,4 @@
-package ru.geekbrains.persist;
+package ru.geekbrains.persist.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -6,18 +6,18 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "roles", indexes = @Index(columnList = "name", name = "rolename_uq"))
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
     private List<User> users;
 
     public Role() {

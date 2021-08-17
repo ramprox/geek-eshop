@@ -3,8 +3,8 @@ package ru.geekbrains.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.geekbrains.dto.RoleDto;
-import ru.geekbrains.persist.Role;
-import ru.geekbrains.persist.RoleRepository;
+import ru.geekbrains.interfaces.RoleService;
+import ru.geekbrains.persist.repositories.RoleRepository;
 
 import java.util.List;
 import java.util.Optional;

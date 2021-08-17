@@ -1,6 +1,7 @@
-package ru.geekbrains.persist;
+package ru.geekbrains.persist.specifications;
 
 import org.springframework.data.jpa.domain.Specification;
+import ru.geekbrains.persist.model.User;
 
 public final class UserSpecifications {
 

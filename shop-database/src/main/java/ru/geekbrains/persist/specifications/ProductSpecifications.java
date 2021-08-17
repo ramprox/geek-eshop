@@ -1,11 +1,9 @@
-package ru.geekbrains.persist;
+package ru.geekbrains.persist.specifications;
 
-import org.hibernate.query.criteria.internal.predicate.CompoundPredicate;
 import org.springframework.data.jpa.domain.Specification;
-import ru.geekbrains.persist.Product;
+import ru.geekbrains.persist.model.Product;
 
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
 import java.math.BigDecimal;
 
 public class ProductSpecifications {
@@ -25,6 +23,7 @@ public class ProductSpecifications {
         return (root, query, builder) -> {
             if(query.getResultType() != Long.class) {
                 root.fetch("category");
+                root.fetch("brand");
             }
             return null;
         };

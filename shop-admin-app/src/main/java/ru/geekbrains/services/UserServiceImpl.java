@@ -6,7 +6,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.geekbrains.dto.*;
-import ru.geekbrains.persist.*;
+import ru.geekbrains.interfaces.UserService;
+import ru.geekbrains.persist.model.Role;
+import ru.geekbrains.persist.model.User;
+import ru.geekbrains.persist.repositories.UserRepository;
+import ru.geekbrains.persist.specifications.UserSpecifications;
 
 import java.util.*;
 import java.util.stream.Collectors;

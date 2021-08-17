@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ru.geekbrains.dto.*;
 import ru.geekbrains.exceptions.NotFoundException;
-import ru.geekbrains.persist.*;
-import ru.geekbrains.services.RoleService;
-import ru.geekbrains.services.UserService;
+import ru.geekbrains.interfaces.RoleService;
+import ru.geekbrains.interfaces.UserService;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;

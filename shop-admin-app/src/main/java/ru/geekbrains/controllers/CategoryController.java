@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ru.geekbrains.dto.CategoryDto;
 import ru.geekbrains.exceptions.NotFoundException;
-import ru.geekbrains.services.CategoryService;
+import ru.geekbrains.interfaces.CategoryService;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;

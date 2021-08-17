@@ -1,7 +1,9 @@
-package ru.geekbrains.persist;
+package ru.geekbrains.persist.repositories;
 
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
+import ru.geekbrains.persist.model.User;
+
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {

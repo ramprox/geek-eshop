@@ -1,4 +1,4 @@
-package ru.geekbrains.services;
+package ru.geekbrains.interfaces;
 
 import org.springframework.data.domain.Page;
 import ru.geekbrains.dto.UserDto;

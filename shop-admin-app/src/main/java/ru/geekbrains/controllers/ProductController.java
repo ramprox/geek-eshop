@@ -9,17 +9,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import ru.geekbrains.dto.CategoryDto;
 import ru.geekbrains.dto.ProductDto;
 import ru.geekbrains.dto.ProductListParams;
 import ru.geekbrains.exceptions.NotFoundException;
-import ru.geekbrains.persist.CategoryRepository;
-import ru.geekbrains.persist.Product;
-import ru.geekbrains.services.CategoryService;
-import ru.geekbrains.services.ProductService;
+import ru.geekbrains.interfaces.BrandService;
+import ru.geekbrains.interfaces.CategoryService;
+import ru.geekbrains.interfaces.ProductService;
 
 import javax.validation.Valid;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/product")
@@ -27,13 +24,15 @@ public class ProductController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final BrandService brandService;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
-    public ProductController(ProductService productService, CategoryService categoryService) {
+    public ProductController(ProductService productService, CategoryService categoryService, BrandService brandService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.brandService = brandService;
     }
 
     @GetMapping
@@ -47,9 +46,8 @@ public class ProductController {
     public String newProduct(Model model) {
         logger.info("New product page requested");
         model.addAttribute("product", new ProductDto());
-        model.addAttribute("categories", categoryService.findAllOrderByName().stream()
-                .map(category -> new CategoryDto(category.getId(), category.getName()))
-                .collect(Collectors.toList()));
+        model.addAttribute("categories", categoryService.findAllOrderByName());
+        model.addAttribute("brands", brandService.findAllOrderByName());
         return "product_form";
     }
 
@@ -57,9 +55,8 @@ public class ProductController {
     public String update(@Valid @ModelAttribute("product") ProductDto product, BindingResult result, Model model) {
         logger.info("Saving product");
         if(result.hasErrors()) {
-            model.addAttribute("categories", categoryService.findAllOrderByName().stream()
-                    .map(category -> new CategoryDto(category.getId(), category.getName()))
-                    .collect(Collectors.toList()));
+            model.addAttribute("categories", categoryService.findAllOrderByName());
+            model.addAttribute("brands", brandService.findAllOrderByName());
             return "product_form";
         }
         productService.save(product);
@@ -71,9 +68,8 @@ public class ProductController {
         logger.info("Product editing page requested");
         model.addAttribute("product", productService.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found")));
-        model.addAttribute("categories", categoryService.findAllOrderByName().stream()
-                .map(category -> new CategoryDto(category.getId(), category.getName()))
-                .collect(Collectors.toList()));
+        model.addAttribute("categories", categoryService.findAllOrderByName());
+        model.addAttribute("brands", brandService.findAllOrderByName());
         return "product_form";
     }
 
