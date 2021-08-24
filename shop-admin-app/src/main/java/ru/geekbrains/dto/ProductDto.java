@@ -1,9 +1,13 @@
 package ru.geekbrains.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDto {
     private Long id;
@@ -20,6 +24,12 @@ public class ProductDto {
 
     @NotNull
     private BrandDto brandDto;
+
+    private List<Long> pictureIds = new ArrayList<>();
+
+    private MultipartFile[] newPictures;
+
+    private String description;
 
     public ProductDto() {
     }
@@ -69,5 +79,29 @@ public class ProductDto {
 
     public void setBrandDto(BrandDto brandDto) {
         this.brandDto = brandDto;
+    }
+
+    public MultipartFile[] getNewPictures() {
+        return newPictures;
+    }
+
+    public void setNewPictures(MultipartFile[] newPictures) {
+        this.newPictures = newPictures;
+    }
+
+    public List<Long> getPictureIds() {
+        return pictureIds;
+    }
+
+    public void setPictureIds(List<Long> pictureIds) {
+        this.pictureIds = pictureIds;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

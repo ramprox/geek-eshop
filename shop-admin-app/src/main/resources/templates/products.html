@@ -9,7 +9,7 @@
             <nav th:replace="fragments/common :: navigation"></nav>
             <div class="row py-2">
 
-                <div class="col-3 mt-3">
+                <div class="col-lg-3 mt-3">
                     <form class="form-group" th:method="get" th:with="name_param=${param.productNameFilter},
                         mincost_param=${param.minCostFilter}, maxcost_param=${param.maxCostFilter}">
                         <div th:replace="fragments/table :: filter('productNameFilter', 'Product name filter', ${name_param})"></div>
@@ -19,7 +19,7 @@
                     </form>
                 </div>
 
-                <div class="col-9 mt-3">
+                <div class="col mt-3">
                     <div sec:authorize="hasRole('ADMIN')" >
                         <a class="btn btn-primary" th:href="@{/product/new}">Add Product</a>
                     </div>
@@ -37,7 +37,11 @@
                         <tbody>
                             <tr th:if="${products.hasContent()}" th:each="product : ${products.content}">
                                 <th scope="row" th:text="${product.id}">1</th>
-                                <td th:text="${product.name}">Product 1</td>
+                                <td>
+                                    <div>
+                                        <label th:text="${product.name}"></label>
+                                    </div>
+                                </td>
                                 <td th:text="${product.cost}">Cost 1</td>
                                 <td th:text="${product.categoryDto.name}">Category</td>
                                 <td th:text="${product.brandDto.name}">Brand</td>
