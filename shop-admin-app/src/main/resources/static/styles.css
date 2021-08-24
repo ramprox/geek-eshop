@@ -29,3 +29,14 @@ header {
     font-size: 1.5em;
     text-align: center;
 }
+
+.col-lg-2 .btn-picture {
+    display: none;
+}
+
+.col-lg-2:hover .btn-picture {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}

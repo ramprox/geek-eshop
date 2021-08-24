@@ -15,6 +15,7 @@ import ru.geekbrains.exceptions.NotFoundException;
 import ru.geekbrains.interfaces.BrandService;
 import ru.geekbrains.interfaces.CategoryService;
 import ru.geekbrains.interfaces.ProductService;
+import ru.geekbrains.service.PictureService;
 
 import javax.validation.Valid;
 
@@ -25,14 +26,19 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final BrandService brandService;
+    private final PictureService pictureService;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
-    public ProductController(ProductService productService, CategoryService categoryService, BrandService brandService) {
+    public ProductController(ProductService productService,
+                             CategoryService categoryService,
+                             BrandService brandService,
+                             PictureService pictureService) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.brandService = brandService;
+        this.pictureService = pictureService;
     }
 
     @GetMapping
@@ -52,15 +58,27 @@ public class ProductController {
     }
 
     @PostMapping
-    public String update(@Valid @ModelAttribute("product") ProductDto product, BindingResult result, Model model) {
-        logger.info("Saving product");
-        if(result.hasErrors()) {
+    public String update(@Valid @ModelAttribute("product") ProductDto product,
+                         BindingResult result,
+                         Model model,
+                         @RequestParam(value = "deleting", required = false) Long pictureId) {
+        if(pictureId != null) {
+            logger.info("Delete picture from list");
+            product.getPictureIds().remove(pictureId);
+            model.addAttribute("product", product);
             model.addAttribute("categories", categoryService.findAllOrderByName());
             model.addAttribute("brands", brandService.findAllOrderByName());
             return "product_form";
+        } else {
+            logger.info("Saving product");
+            if (result.hasErrors()) {
+                model.addAttribute("categories", categoryService.findAllOrderByName());
+                model.addAttribute("brands", brandService.findAllOrderByName());
+                return "product_form";
+            }
+            productService.save(product);
+            return "redirect:/product";
         }
-        productService.save(product);
-        return "redirect:/product";
     }
 
     @GetMapping("/{id}")

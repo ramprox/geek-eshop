@@ -40,9 +40,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserDto> findWithFilter(UserListParams userListParams) {
         Specification<User> spec = Specification.where(null);
-
-        if (userListParams.getUsernameFilter() != null && !userListParams.getUsernameFilter().isBlank()) {
-            spec = spec.and(UserSpecifications.usernamePrefix(userListParams.getUsernameFilter()));
+        String username = userListParams.getUsernameFilter();
+        if (username != null && !username.isEmpty()) {
+            spec = spec.and(UserSpecifications.usernamePrefix(username));
         }
         if (userListParams.getMinAge() != null) {
             spec = spec.and(UserSpecifications.minAge(userListParams.getMinAge()));
@@ -51,12 +51,12 @@ public class UserServiceImpl implements UserService {
             spec = spec.and(UserSpecifications.maxAge(userListParams.getMaxAge()));
         }
         Sort sortedBy;
-        if(userListParams.getSortBy() != null && !userListParams.getSortBy().isBlank()) {
+        if(userListParams.getSortBy() != null && !userListParams.getSortBy().isEmpty()) {
             sortedBy = Sort.by(userListParams.getSortBy());
         } else {
             sortedBy = Sort.by("id");
         }
-        if(userListParams.getDirection() != null && !userListParams.getDirection().isBlank() && userListParams.getDirection().equals("desc")) {
+        if(userListParams.getDirection() != null && !userListParams.getDirection().isEmpty() && userListParams.getDirection().equals("desc")) {
             sortedBy = sortedBy.descending();
         } else {
             sortedBy = sortedBy.ascending();
@@ -72,7 +72,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserDto> findById(Long id) {
         return userRepository.findById(id)
-                .map(user -> new UserDto(user.getId(), user.getUsername(), user.getAge(), mapRolesDto(user)));
+                .map(user -> new UserDto(user.getId(),
+                        user.getUsername(),
+                        user.getAge(),
+                        mapRolesDto(user)));
     }
 
     @Override

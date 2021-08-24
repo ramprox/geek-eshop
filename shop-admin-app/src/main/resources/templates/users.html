@@ -9,7 +9,7 @@
             <nav th:replace="fragments/common.html :: navigation"></nav>
             <div class="row py-2">
 
-                <div class="col-3 mt-3">
+                <div class="col-lg-3 mt-3">
                     <form class="form-inline" th:method="get" th:with="name_param=${param.usernameFilter},
                         minAge_param=${param.minAge}, maxAge_param=${param.maxAge}">
                         <div th:replace="fragments/table :: filter('usernameFilter', 'Username filter', ${name_param})"></div>
@@ -18,7 +18,7 @@
                         <button type="submit" class="btn btn-primary mb-2">Apply</button>
                     </form>
                 </div>
-                <div class="col-9 mt-3">
+                <div class="col mt-3">
                     <div sec:authorize="hasRole('ADMIN')">
                         <a class="btn btn-primary" th:href="@{/user/new}">Add User</a>
                     </div>
