@@ -27,11 +27,22 @@ public class ProductDto {
 
     private List<Long> pictureIds = new ArrayList<>();
 
+    private Long mainPictureId;
+
     private MultipartFile[] newPictures;
 
     private String description;
 
+    private String shortDescription;
+
     public ProductDto() {
+    }
+
+    public ProductDto(Long id, String name, BigDecimal cost, Long mainPictureId) {
+        this.id = id;
+        this.name = name;
+        this.cost = cost;
+        this.mainPictureId = mainPictureId;
     }
 
     public ProductDto(Long id, String name, BigDecimal cost, CategoryDto categoryDto) {
@@ -103,5 +114,21 @@ public class ProductDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public Long getMainPictureId() {
+        return mainPictureId;
+    }
+
+    public void setMainPictureId(Long mainPictureId) {
+        this.mainPictureId = mainPictureId;
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 public class SecurityConfig {
@@ -25,12 +24,12 @@ public class SecurityConfig {
                     .authorizeRequests()
                     .antMatchers("/**/*.css", "/**/*.js", "/*.png").permitAll()
                     .antMatchers("/login").permitAll()
-                    .antMatchers("/**/*").hasRole("ADMIN")
+                    .antMatchers("/**/*", "/").hasRole("ADMIN")
                     .and()
                     .formLogin()
                     .loginPage("/login")
                     .loginProcessingUrl("/login_processing")
-                    .defaultSuccessUrl("/user")
+                    .defaultSuccessUrl("/home")
                     .and()
                     .exceptionHandling()
                     .accessDeniedPage("/access_denied");

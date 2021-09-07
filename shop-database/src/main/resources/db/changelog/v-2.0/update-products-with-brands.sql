@@ -1,60 +1,60 @@
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.name = 'Ryzen 5 3600 OEM';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.id = 1;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.name = 'Radeon R5 R538G1601U2S-U';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.id = 2;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Apple') WHERE products.name = 'iPad 2020 10.2"';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Apple') WHERE products.id = 3;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Acer') WHERE products.name = 'K242HYLBBD 23.6"';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Acer') WHERE products.id = 4;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Intel') WHERE products.name = 'Core i5-10400F OEM';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Intel') WHERE products.id = 5;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'GIGABYTE') WHERE products.name = 'GeForce RTX 3060 GAMING';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'GIGABYTE') WHERE products.id = 6;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Kyocera') WHERE products.name = 'ECOSYS P2040dn';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Kyocera') WHERE products.id = 7;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'WD') WHERE products.name = 'WD10EZEX 1TБ';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'WD') WHERE products.id = 8;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Apple') WHERE products.name = 'iPhone 12';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Apple') WHERE products.id = 9;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'MSI') WHERE products.name = 'Z490-A PRO';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'MSI') WHERE products.id = 10;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'HP') WHERE products.name = 'Laser 107r';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'HP') WHERE products.id = 11;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.name = 'Ryzen 5 3500X OEM';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.id = 12;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Palit') WHERE products.name = 'GeForce GTX 1660 DUAL';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Palit') WHERE products.id = 13;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Samsung') WHERE products.name = 'S24F354FHI 23.5"';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Samsung') WHERE products.id = 14;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Seagate') WHERE products.name = 'ST1000DM010 1ТБ';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Seagate') WHERE products.id = 15;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.name = 'Radeon R9 R9S416G3206U2K';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.id = 16;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Huawei') WHERE products.name = 'Matepad 10.4"';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Huawei') WHERE products.id = 17;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Xiaomi') WHERE products.name = 'Redmi 9';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Xiaomi') WHERE products.id = 18;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'HP') WHERE products.name = 'LaserJet Pro M15a';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'HP') WHERE products.id = 19;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'WD') WHERE products.name = 'WD20PURZ 2ТБ';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'WD') WHERE products.id = 20;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'MSI') WHERE products.name = 'B450M MORTAR MAX';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'MSI') WHERE products.id = 21;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.name = 'Ryzen 9 5900X BOX';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'AMD') WHERE products.id = 22;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Samsung') WHERE products.name = 'F24G35TFWI 24"';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Samsung') WHERE products.id = 23;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Samsung') WHERE products.name = 'Galaxy Tab S6 Lite 10.4"';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Samsung') WHERE products.id = 24;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'MSI') WHERE products.name = 'GeForce RTX 3080 Ti';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'MSI') WHERE products.id = 25;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'GIGABYTE') WHERE products.name = 'B550 AORUS ELITE V2';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'GIGABYTE') WHERE products.id = 26;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Apple') WHERE products.name = 'iPhone 11';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Apple') WHERE products.id = 27;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Seagate') WHERE products.name = 'ST4000VX007 4ТБ';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Seagate') WHERE products.id = 28;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Kingston') WHERE products.name = 'HyperX HX437C19FB3K2/32';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Kingston') WHERE products.id = 29;
 GO
-UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Intel') WHERE products.name = 'Core i5-10400 BOX';
+UPDATE products SET brand_id = (SELECT id FROM brands WHERE name = 'Intel') WHERE products.id = 30;
 GO

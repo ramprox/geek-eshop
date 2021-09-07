@@ -1,50 +1,53 @@
 <!doctype html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <head th:replace="fragments/common :: head('Eshop application')"></head>
-    <body>
-        <div class="container">
-            <header th:replace="fragments/common :: header"/>
-            <nav th:replace="fragments/common.html :: navigation"></nav>
-            <div class="row py-2">
-                <div class="col-12">
-                    <form th:action="@{/user}" method="post" th:object="${user}">
-                        <input type="hidden" id="id" th:field="*{id}">
-                        <div class="form-group">
-                            <label>Username</label>
-                            <input type="text" class="form-control" id="name" th:field="*{username}" placeholder="Enter username">
-                            <p class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Enter password">
-                            <p class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
-                        </div>
-                        <div class="form-group">
-                            <label>Repeat password</label>
-                            <input type="password" class="form-control" id="matchingPassword" th:field="*{matchingPassword}" placeholder="Repeat password">
-                            <p class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
-                        </div>
-                        <div class="form-group">
-                            <label>Age</label>
-                            <input type="number" class="form-control" id="age" th:field="*{age}" placeholder="User age">
-                            <p class="text-danger" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></p>
-                        </div>
-                        <div class="form-group" sec:authorize="hasRole('ADMIN')">
-                            <label for="roles">Roles</label>
-                            <select multiple class="form-control" id="roles" th:field="*{roles}" required>
-                                <option th:each="role : ${roles}"
-                                        th:text="${role.name}"
-                                        th:value="${role.id} + ';' + ${role.name}"
-                                        th:selected="${user.roles?.contains(role)}"></option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common :: head('Eshop application')"></head>
+<body>
+<div class="container">
+    <header th:replace="fragments/common :: header"/>
+    <nav th:replace="fragments/common.html :: navigation"></nav>
+    <div class="row mb-3 mx-0 px-1">
+        <div class="col-md-12 bg-light rounded border border-info shadow py-3">
+            <form th:action="@{/user}" method="post" th:object="${user}">
+                <input type="hidden" id="id" th:field="*{id}">
+                <div class="row">
+                    <div class="form-group col">
+                        <label>Username</label>
+                        <input type="text" class="form-control" id="name" th:field="*{username}"
+                               placeholder="Enter username">
+                        <p class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+                    </div>
+                    <div class="form-group col">
+                        <label>Age</label>
+                        <input type="number" class="form-control" id="age" th:field="*{age}" placeholder="User age">
+                        <p class="text-danger" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></p>
+                    </div>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}"
+                           placeholder="Enter password">
+                    <p class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+                </div>
+                <div class="form-group">
+                    <label>Repeat password</label>
+                    <input type="password" class="form-control" id="matchingPassword" th:field="*{matchingPassword}"
+                           placeholder="Repeat password">
+                    <p class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+                </div>
+                <div class="form-group">
+                    <label for="roles">Roles</label>
+                    <select multiple class="form-control" id="roles" th:field="*{roles}" required>
+                        <option th:each="role : ${roles}"
+                                th:text="${role.name}"
+                                th:value="${role.id} + ';' + ${role.name}"
+                                th:selected="${user.roles?.contains(role)}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
-    </body>
-    <th:block th:insert="fragments/common :: end_scripts"></th:block>
+    </div>
+</div>
+</body>
+<th:block th:insert="fragments/common :: end_scripts"></th:block>
 </html>

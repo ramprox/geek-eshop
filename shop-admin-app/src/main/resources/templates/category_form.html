@@ -1,25 +1,26 @@
 <!doctype html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments/common :: head('Edit category')"></head>
-    <body>
-        <div class="container">
-            <header th:replace="fragments/common :: header"/>
-            <nav th:replace="fragments/common.html :: navigation"></nav>
-            <div class="row py-2">
-                <div class="col-12">
-                    <form th:action="@{/category}" method="post" th:object="${category}">
-                        <input type="hidden" id="id" th:field="*{id}">
-                        <div class="form-group">
-                            <label>Category name</label>
-                            <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Category name">
-                            <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
+<head th:replace="fragments/common :: head('Edit category')"></head>
+<body>
+<div class="container">
+    <header th:replace="fragments/common :: header"/>
+    <nav th:replace="fragments/common.html :: navigation"></nav>
+    <div class="row mb-3 mx-0">
+        <div class="col-md-12 p-1">
+            <form class="bg-light rounded border border-info p-2 shadow"
+                  th:action="@{/category}" method="post" th:object="${category}">
+                <input type="hidden" id="id" th:field="*{id}">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Category name">
+                    <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
-    </body>
-    <th:block th:insert="fragments/common :: end_scripts"></th:block>
+    </div>
+</div>
+</body>
+<th:block th:insert="fragments/common :: end_scripts"></th:block>
 </html>

@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.geekbrains.persist.model.Picture;
 import ru.geekbrains.persist.repositories.PictureRepository;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -75,6 +75,7 @@ public class PictureServiceFileImpl implements PictureService {
         return fileName;
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) throws IOException {
         Optional<Picture> picture = findById(id);

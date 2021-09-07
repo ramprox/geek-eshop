@@ -1,0 +1,114 @@
+<div class="row">
+  <div class="col-md-3 mb-3 p-1">
+    <form>
+      <div class="accordion mb-3 border border-info rounded-3" id="accordionCategory">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingCategories">
+            <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#controlsCategories" aria-expanded="false" aria-controls="controlsCategories">
+              Categories
+            </button>
+          </h2>
+          <div id="controlsCategories" class="accordion-collapse collapse" aria-labelledby="headingCategories"
+               data-bs-parent="#accordionCategory">
+            <div class="accordion-body m-0 p-0">
+              <div class="form-check w-100 m-0 p-0" *ngIf="categories.length > 0">
+                <input type="radio" class="btn-check" name="options" id="optionAll" autocomplete="off"
+                       [attr.checked]="productListParams.categoryId == -1 ? '' : null">
+                <label class="btn btn-outline-primary w-100 border-0 rounded-0 text-start" for="optionAll"
+                       (click)="changeCategory(-1)">All</label>
+              </div>
+              <div class="form-check w-100 m-0 p-0" *ngFor="let category of categories; index as i">
+                <input type="radio" class="btn-check" name="options" id='{{"option" + i}}' autocomplete="off"
+                       [attr.checked]="productListParams.categoryId == category.id ? '' : null">
+                <label class="btn btn-outline-primary w-100 border-0 rounded-0 text-start" for='{{"option" + i}}'
+                       (click)="changeCategory(category.id)">{{category.name}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border border-info rounded-3">
+        <div class="card-header">Filters</div>
+        <div class="card-body p-2">
+          <label for="nameFilter" class="form-label">Name</label>
+          <div class="input-group mb-3">
+            <input type="text" name="nameFilter" [(ngModel)]="productListParams.productName"  class="form-control" id="nameFilter" placeholder="Name" aria-label="Name">
+          </div>
+
+          <label for="priceFilter" class="form-label">Price</label>
+          <div class="input-group mb-3" id="priceFilter">
+            <input type="number" name="minCostFilter" [(ngModel)]="productListParams.minCost" class="form-control" placeholder="From" aria-label="From">
+            <span class="input-group-text">-</span>
+            <input type="number" name="maxCostFilter" [(ngModel)]="productListParams.maxCost" class="form-control" placeholder="To" aria-label="To">
+          </div>
+
+          <div class="accordion border border-2 rounded-3 border-info mt-3" id="accordionBrand">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingBrands">
+                <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#controlsBrands" aria-expanded="false" aria-controls="controlsBrands">
+                  Brands
+                </button>
+              </h2>
+              <div id="controlsBrands" class="accordion-collapse collapse" aria-labelledby="headingBrands"
+                   data-bs-parent="#accordionBrand">
+                <div class="accordion-body p-2">
+                  <div class="form-check" *ngFor="let brand of brands">
+                    <input class="form-check-input" type="checkbox" value="" id="brand1">
+                    <label class="form-check-label" for="brand1">{{brand.name}}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary mt-2" type="submit" (click)="applyClick()">Apply</button>
+    </form>
+  </div>
+
+  <div class="col-md-9 p-1">
+
+    <div class="d-flex border rounded-3 border-primary shadow mb-3 p-2" style="min-width: 330px;" *ngFor="let prod of page?.content">
+      <div class="align-self-center me-3">
+        <img style="height: 150px; width: 150px; object-fit: contain;"
+             [attr.src]="prod.mainPictureId ? '/api/v1/picture/' + prod.mainPictureId : '/no_image.png'">
+      </div>
+      <div class="d-flex flex-column w-100">
+        <div class="d-flex flex-nowrap">
+          <h5 class="card-title text-wrap text-break pe-2">{{prod.name}}</h5>
+          <p class="ms-auto text-success">{{prod.cost}}&nbsp;&#8381;</p>
+        </div>
+        <p class="card-text text-truncate flex-fill text-wrap text-break word-break"
+           style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; white-space: normal">
+          {{prod.shortDescription}}</p>
+        <div class="d-flex">
+          <a routerLink="/product/{{prod.id}}" class="btn btn-primary">View</a>
+          <a href="#" class="btn btn-primary ms-2">Add to card</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-9 col-xs-12 mt-3" *ngIf="page != null && !page.empty">
+      <nav aria-label="...">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="page.first">
+            <a class="page-link" routerLink="" (click)="changePage(page.number)" tabindex="-1" aria-disabled="true">Previous</a>
+          </li>
+          <li class="page-item" *ngFor="let pageNumber of numbers()" [class.active]="pageNumber == page.number">
+            <a class="page-link" routerLink="" (click)="changePage(pageNumber + 1)">{{pageNumber + 1}}</a>
+          </li>
+          <li class="page-item" [class.disabled]="page.last">
+            <a class="page-link" routerLink="" (click)="changePage(page.number + 2);">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="col-md-9 col-xs-12 mt-3 text-center" *ngIf="page?.empty">
+      Nothing found
+    </div>
+  </div>
+</div>

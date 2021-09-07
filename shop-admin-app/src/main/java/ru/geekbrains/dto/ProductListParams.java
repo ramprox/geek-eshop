@@ -1,38 +1,41 @@
 package ru.geekbrains.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class ProductListParams {
-    private String productNameFilter;
-    private BigDecimal minCostFilter;
-    private BigDecimal maxCostFilter;
+    private String productName;
+    private BigDecimal minCost;
+    private BigDecimal maxCost;
     private Integer page;
     private Integer size;
     private String sortBy;
     private String direction;
+    private Long categoryId;
+    private List<Long> brandIds;
 
-    public String getProductNameFilter() {
-        return productNameFilter;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProductNameFilter(String productNameFilter) {
-        this.productNameFilter = productNameFilter;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public BigDecimal getMinCostFilter() {
-        return minCostFilter;
+    public BigDecimal getMinCost() {
+        return minCost;
     }
 
-    public void setMinCostFilter(BigDecimal minCostFilter) {
-        this.minCostFilter = minCostFilter;
+    public void setMinCost(BigDecimal minCost) {
+        this.minCost = minCost;
     }
 
-    public BigDecimal getMaxCostFilter() {
-        return maxCostFilter;
+    public BigDecimal getMaxCost() {
+        return maxCost;
     }
 
-    public void setMaxCostFilter(BigDecimal maxCostFilter) {
-        this.maxCostFilter = maxCostFilter;
+    public void setMaxCost(BigDecimal maxCost) {
+        this.maxCost = maxCost;
     }
 
     public Integer getPage() {
@@ -65,5 +68,21 @@ public class ProductListParams {
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public List<Long> getBrandIds() {
+        return brandIds;
+    }
+
+    public void setBrandIds(List<Long> brandIds) {
+        this.brandIds = brandIds;
     }
 }

@@ -1,43 +1,45 @@
 <!doctype html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments/common :: head('Categories')"></head>
-    <body>
-        <div class="container">
-            <header th:replace="fragments/common :: header"/>
-            <nav th:replace="fragments/common :: navigation"></nav>
-            <div class="row py-2">
-                <div class="col-12">
-                    <a class="btn btn-primary" th:href="@{/category/new}">Add category</a>
-                </div>
-                <div class="col-12">
-                    <table class="table table-bordered my-2">
-                        <thead>
-                            <tr>
-                                <th scope="col">Id</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:if="${categories.size() > 0}" th:each="category : ${categories}">
-                                <th scope="row" th:text="${category.id}">1</th>
-                                <td th:text="${category.name}">Category 1</td>
-                                <td>
-                                    <a class="btn btn-success" th:href="@{category/{id}(id = ${category.id})}"><i class="fas fa-edit"></i></a>
-                                    <form class="d-inline" th:method="delete" th:action="@{/category/{id}(id = ${category.id})}">
-                                        <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
-                                    </form>
-                                </td>
-                            </tr>
-                            <tr th:unless="${categories.size() > 0}">
-                                <td colspan="4">No data</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<head th:replace="fragments/common :: head('Categories')"></head>
+<body>
+<div class="container">
+    <header th:replace="fragments/common :: header"/>
+    <nav th:replace="fragments/common :: navigation"></nav>
+    <div class="row mb-3 mx-0">
+        <div class="col-md-12 p-1">
+            <div class="bg-light rounded border border-info p-2 shadow">
+                <a class="btn btn-primary" th:href="@{/category/new}">Add category</a>
+                <table class="table table-bordered my-2">
+                    <thead class="bg-info">
+                    <tr>
+                        <th scope="col" class="text-white">Id</th>
+                        <th scope="col" class="text-white">Name</th>
+                        <th scope="col" class="text-white">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${categories.size() > 0}" th:each="category : ${categories}">
+                        <th scope="row" th:text="${category.id}">1</th>
+                        <td th:text="${category.name}">Category 1</td>
+                        <td>
+                            <a class="btn btn-success" th:href="@{category/{id}(id = ${category.id})}">
+                                <i class="fas fa-edit"></i></a>
+                            <form class="d-inline" th:method="delete"
+                                  th:action="@{/category/{id}(id = ${category.id})}">
+                                <button type="submit" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:unless="${categories.size() > 0}">
+                        <td colspan="4">No data</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-    </body>
-    <th:block th:insert="fragments/common :: end_scripts"></th:block>
+    </div>
+</div>
+</body>
+<th:block th:insert="fragments/common :: end_scripts"></th:block>
 </html>

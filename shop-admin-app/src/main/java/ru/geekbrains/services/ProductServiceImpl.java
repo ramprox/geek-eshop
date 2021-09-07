@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.geekbrains.dto.BrandDto;
 import ru.geekbrains.dto.CategoryDto;
@@ -22,10 +23,9 @@ import ru.geekbrains.persist.repositories.ProductRepository;
 import ru.geekbrains.persist.specifications.ProductSpecifications;
 import ru.geekbrains.service.PictureService;
 
-import javax.transaction.Transactional;
+
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,10 +57,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDto> findWithFilter(ProductListParams listParams) {
         Specification<Product> spec = Specification.where(null);
-        String productNameFilter = listParams.getProductNameFilter();
-        BigDecimal minCostFilter = listParams.getMinCostFilter();
-        BigDecimal maxCostFilter = listParams.getMaxCostFilter();
+        String productNameFilter = listParams.getProductName();
+        BigDecimal minCostFilter = listParams.getMinCost();
+        BigDecimal maxCostFilter = listParams.getMaxCost();
         String sortBy = listParams.getSortBy();
+        Long categoryId = listParams.getCategoryId();
+        List<Long> brandIds = listParams.getBrandIds();
         if(productNameFilter != null && !productNameFilter.isEmpty()) {
             spec = spec.and(ProductSpecifications.productNamePrefix(productNameFilter));
         }
@@ -70,18 +72,23 @@ public class ProductServiceImpl implements ProductService {
         if(maxCostFilter != null) {
             spec = spec.and(ProductSpecifications.maxCost(maxCostFilter));
         }
+        if(categoryId != null && categoryId >= 0) {
+            spec = spec.and(ProductSpecifications.productCategory(categoryId));
+        }
+        if(brandIds != null && brandIds.size() > 0) {
+            Specification<Product> specBrands = Specification.where(null);
+            for(Long brandId : brandIds) {
+                specBrands = specBrands.or(ProductSpecifications.productBrands(brandId));
+            }
+            spec = spec.and(specBrands);
+        }
         Sort sortedBy = sortBy != null && !sortBy.isEmpty() ? Sort.by(sortBy) : Sort.by("id");
         sortedBy = "desc".equals(listParams.getDirection()) ? sortedBy.descending() : sortedBy.ascending();
 
-        return productRepository.findAll(spec,
+        return productRepository.findAllForAdmin(spec,
                 PageRequest.of(Optional.ofNullable(listParams.getPage()).orElse(1) - 1,
                         Optional.ofNullable(listParams.getSize()).orElse(10), sortedBy))
-                .map(product -> {
-                    ProductDto productDto = new ProductDto(product.getId(), product.getName(), product.getCost(), mapToCategoryDto(product.getCategory()));
-                    productDto.setBrandDto(mapToBrandDto(product.getBrand()));
-                    productDto.setDescription(product.getDescription());
-                    return productDto;
-                });
+                .map(product -> new ProductDto(product.getId(), product.getName(), product.getCost(), product.getMainPicture().getId()));
     }
 
     private static CategoryDto mapToCategoryDto(Category category) {
@@ -102,14 +109,20 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void save(ProductDto productDto) {
         CategoryDto categoryDto = productDto.getCategoryDto();
+        BrandDto brandDto = productDto.getBrandDto();
         Product product = new Product(
                 productDto.getId(),
                 productDto.getName(),
                 productDto.getCost(),
-                new Category(categoryDto.getId(), categoryDto.getName()));
-        BrandDto brandDto = productDto.getBrandDto();
+                new Category(categoryDto.getId(), categoryDto.getName()),
+                new Brand(brandDto.getId(), brandDto.getName()));
         product.setBrand(new Brand(brandDto.getId(), brandDto.getName()));
         product.setDescription(productDto.getDescription());
+        product.setShortDescription(productDto.getShortDescription());
+        if(productDto.getMainPictureId() != null) {
+            product.setMainPicture(pictureService.findById(productDto.getMainPictureId()).get());
+        }
+
         List<Long> pictureIds = productDto.getPictureIds();
         List<Picture> pictures = pictureService.findByProductId(productDto.getId());
 
@@ -125,6 +138,7 @@ public class ProductServiceImpl implements ProductService {
             logger.info("Can't delete file", ex);
             throw new RuntimeException(ex);
         }
+
         if(productDto.getNewPictures() != null) {
             for(MultipartFile newPicture : productDto.getNewPictures()) {
                 try {
@@ -145,7 +159,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Optional<ProductDto> findById(Long id) {
-        return productRepository.findByIdFetchCategoryAndBrand(id)
+        return productRepository.findAllInfoById(id)
                 .map(product -> {
                     BrandDto brandDto = mapToBrandDto(product.getBrand());
                     ProductDto productDto = new ProductDto(product.getId(),
@@ -155,6 +169,11 @@ public class ProductServiceImpl implements ProductService {
                     productDto.setBrandDto(brandDto);
                     productDto.setPictureIds(mapToPictureIds(product.getPictures()));
                     productDto.setDescription(product.getDescription());
+                    productDto.setShortDescription(product.getShortDescription());
+                    Picture mainPicture = product.getMainPicture();
+                    if(mainPicture != null) {
+                        productDto.setMainPictureId(mainPicture.getId());
+                    }
                     return productDto;
                 });
     }

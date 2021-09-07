@@ -1,0 +1,14 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/common :: head('Home')"></head>
+    <body>
+        <div class="container">
+            <header th:replace="fragments/common :: header"/>
+            <nav th:replace="fragments/common :: navigation"></nav>
+            <div class="row mb-3 mx-0 px-1">
+                <h1 class="text-center border border-info rounded bg-light shadow w-100 px-2 py-3" style="font-size: 3em;">Welcome to admin</h1>
+            </div>
+        </div>
+    </body>
+    <th:block th:insert="fragments/common :: end_scripts"></th:block>
+</html>

@@ -3,6 +3,7 @@ package ru.geekbrains.persist.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -27,20 +28,36 @@ public class Product {
     @JoinColumn(name = "brand_id", nullable = false, foreignKey = @ForeignKey(name = "fk_products_brands_id"))
     private Brand brand;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Picture> pictures = new ArrayList<>();
 
-    @Column
+    @OneToOne
+    @JoinTable(name = "main_pictures",
+            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "picture_id", referencedColumnName = "id")})
+    private Picture mainPicture;
+
+    @Column(length = 2048)
     private String description;
+
+    @Column(name = "short_description")
+    private String shortDescription;
 
     public Product() {
     }
 
-    public Product(Long id, String name, BigDecimal cost, Category category) {
+    public Product(Long id, String name, BigDecimal cost, Picture mainPicture) {
         this.id = id;
         this.name = name;
         this.cost = cost;
-        this.category = category;
+        this.mainPicture = mainPicture;
+    }
+
+    public Product(Long id, String name, BigDecimal cost, String shortDescription) {
+        this.id = id;
+        this.name = name;
+        this.cost = cost;
+        this.shortDescription = shortDescription;
     }
 
     public Product(Long id, String name, BigDecimal cost, Category category, Brand brand) {
@@ -99,11 +116,27 @@ public class Product {
         this.pictures = pictures;
     }
 
+    public Picture getMainPicture() {
+        return mainPicture;
+    }
+
+    public void setMainPicture(Picture mainPicture) {
+        this.mainPicture = mainPicture;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
     }
 }
