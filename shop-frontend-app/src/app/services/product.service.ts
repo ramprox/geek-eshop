@@ -4,6 +4,7 @@ import {Product} from "../model/product";
 import {Page} from "../model/page";
 import {ProductListParams} from "../model/productListParams";
 import {ProductsPage} from "../model/productsPage";
+import {ProductFilterDto} from "../model/product-filter";
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +21,22 @@ export class ProductService {
     if(productListParams.page > 1) {
       queryParams = queryParams.set('page', productListParams.page);
     }
-    if(productListParams.productName != '') {
-      queryParams = queryParams.set('productName', productListParams.productName);
+    let productFilter = productListParams.productFilter;
+    if(productFilter.namePattern != null && productFilter.namePattern != '') {
+      queryParams = queryParams.set('productName', productFilter.namePattern);
     }
-    if(productListParams.minCost != null && productListParams.minCost > 0) {
-      queryParams = queryParams.set('minCost', productListParams.minCost);
+    if(productFilter.minCost != null && productFilter.minCost > 0) {
+      queryParams = queryParams.set('minCost', productFilter.minCost);
     }
-    if(productListParams.maxCost != null && productListParams.maxCost > 0) {
-      queryParams = queryParams.set('maxCost', productListParams.maxCost);
+    if(productFilter.maxCost != null && productFilter.maxCost > 0) {
+      queryParams = queryParams.set('maxCost', productFilter.maxCost);
+    }
+    if(productFilter.brands.size > 0) {
+      for(let entry of productFilter.brands.entries()) {
+        if(entry[1].isChecked) {
+         queryParams = queryParams.append('brandIds', entry[0]);
+        }
+      }
     }
     return this.http.get<ProductsPage>('/api/v1/product/all', {params : queryParams}).toPromise();
   }

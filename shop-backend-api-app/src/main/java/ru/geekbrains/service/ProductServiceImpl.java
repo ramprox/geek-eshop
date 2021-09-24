@@ -46,10 +46,11 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductDto> findWithFilter(ProductListParams listParams) {
         Specification<Product> spec = Specification.where(null);
         String productNameFilter = listParams.getProductName();
-        Long categoryId = listParams.getCategoryId();
         BigDecimal minCostFilter = listParams.getMinCost();
         BigDecimal maxCostFilter = listParams.getMaxCost();
+        Long categoryId = listParams.getCategoryId();
         String sortBy = listParams.getSortBy();
+        List<Long> brandIds = listParams.getBrandIds();
         if (productNameFilter != null && !productNameFilter.isEmpty()) {
             spec = spec.and(ProductSpecifications.productNamePrefix(productNameFilter));
         }
@@ -61,6 +62,13 @@ public class ProductServiceImpl implements ProductService {
         }
         if (categoryId != null && categoryId >= 0) {
             spec = spec.and(ProductSpecifications.productCategory(categoryId));
+        }
+        if(brandIds != null && brandIds.size() > 0) {
+            Specification<Product> specBrands = Specification.where(null);
+            for(Long brandId : brandIds) {
+                specBrands = specBrands.or(ProductSpecifications.productBrands(brandId));
+            }
+            spec = spec.and(specBrands);
         }
         Sort sortedBy = sortBy != null && !sortBy.isEmpty() ? Sort.by(sortBy) : Sort.by("id");
         sortedBy = "desc".equals(listParams.getDirection()) ? sortedBy.descending() : sortedBy.ascending();

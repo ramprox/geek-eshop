@@ -3,6 +3,8 @@ import {Product} from "../../model/product";
 import {ProductService} from "../../services/product.service";
 import {ActivatedRoute} from "@angular/router";
 
+export const PRODUCT_INFO_URL = 'product/:id';
+
 @Component({
   selector: 'app-product-info',
   templateUrl: './product-info.component.html',

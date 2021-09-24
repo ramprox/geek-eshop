@@ -1,0 +1,44 @@
+<form>
+  <div class="card border border-info rounded-3">
+    <div class="card-header">Filters</div>
+    <div class="card-body p-2">
+      <label for="nameFilter" class="form-label">Name</label>
+      <div class="input-group mb-3">
+        <input type="text" name="nameFilter" [(ngModel)]="productFilter.namePattern" class="form-control"
+               id="nameFilter" placeholder="Name" aria-label="Name">
+      </div>
+
+      <label for="priceFilter" class="form-label">Price</label>
+      <div class="input-group mb-3" id="priceFilter">
+        <input type="number" name="minCostFilter" [(ngModel)]="productFilter.minCost" class="form-control"
+               placeholder="From" aria-label="From">
+        <span class="input-group-text">-</span>
+        <input type="number" name="maxCostFilter" [(ngModel)]="productFilter.maxCost" class="form-control"
+               placeholder="To" aria-label="To">
+      </div>
+
+      <div class="accordion border border-2 rounded-3 border-info mb-3" id="accordionBrand">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingBrands">
+            <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#controlsBrands" aria-expanded="false" aria-controls="controlsBrands">
+              Brands
+            </button>
+          </h2>
+          <div id="controlsBrands" class="accordion-collapse collapse" aria-labelledby="headingBrands"
+               data-bs-parent="#accordionBrand">
+            <div class="accordion-body p-2">
+              <div class="form-check" *ngFor="let brand of brands; let idx = index;">
+                <input class="form-check-input" type="checkbox" value="" id="{{'brand' + idx}}"
+                       [attr.checked]="productFilter.brands.get(brand.id)?.isChecked ? '' : null"
+                       (input)="checkedChanged(brand.id, $event)">
+                <label class="form-check-label" for="{{'brand' + idx}}">{{brand.name}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" type="submit" (click)="applyFilter()">Apply</button>
+    </div>
+  </div>
+</form>

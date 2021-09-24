@@ -22,7 +22,7 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http
                     .authorizeRequests()
-                    .antMatchers("/**/*.css", "/**/*.js", "/*.png").permitAll()
+                    .antMatchers("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.ico").permitAll()
                     .antMatchers("/login").permitAll()
                     .antMatchers("/**/*", "/").hasRole("ADMIN")
                     .and()

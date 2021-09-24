@@ -4,6 +4,10 @@ import {Page} from "../../model/page";
 import {ProductListParams} from "../../model/productListParams";
 import {Brand} from "../../model/brand";
 import {Category} from "../../model/category";
+import {CartService} from "../../services/cart.service";
+import {AddLineItemDto} from "../../model/add-line-item-dto";
+import { ProductFilterDto } from "../../model/product-filter";
+import { CheckBrand } from "../../model/check-brand";
 
 export const PRODUCT_GALLERY_URL = 'product';
 
@@ -15,15 +19,25 @@ export const PRODUCT_GALLERY_URL = 'product';
 export class ProductGalleryComponent implements OnInit {
 
   productListParams: ProductListParams = new ProductListParams();
-  page: Page | null = null;
+  page?: Page;
   brands: Brand[] = [];
   categories: Category[] = [];
   isError: boolean = false;
 
-  constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService,
+              private cartService: CartService) { }
 
   ngOnInit(): void {
     this.retrieveProducts();
+  }
+
+  brandsToCheckBrands(brands: Brand[]) {
+    let checkBrands: CheckBrand[] = [];
+    for(var i = 0; i < brands.length; i++) {
+      checkBrands.push(new CheckBrand(brands[i], false));
+    }
+    console.log(brands.length);
+    return checkBrands;
   }
 
   private retrieveProducts() {
@@ -40,13 +54,9 @@ export class ProductGalleryComponent implements OnInit {
       })
   }
 
-  numbers() {
-    return Array.from(Array(this.page?.totalPages).keys());
-  }
-
-  changePage(newPage: number) {
-    if(this.productListParams.page != newPage) {
-      this.productListParams.page = newPage;
+  pageNumberChange($event: number) {
+    if(this.productListParams.page != $event) {
+      this.productListParams.page = $event;
       this.retrieveProducts();
     }
   }
@@ -59,8 +69,9 @@ export class ProductGalleryComponent implements OnInit {
     }
   }
 
-  applyClick() {
+  applyFilter($event: ProductFilterDto) {
     this.productListParams.page = 1;
+    this.productListParams.productFilter = $event;
     this.retrieveProducts();
   }
 }

@@ -1,6 +1,7 @@
 package ru.geekbrains.controller;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class ProductListParams {
     private String productName;
@@ -11,6 +12,7 @@ public class ProductListParams {
     private String sortBy;
     private String direction;
     private Long categoryId;
+    private List<Long> brandIds;
 
     public String getProductName() {
         return productName;
@@ -74,5 +76,13 @@ public class ProductListParams {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public List<Long> getBrandIds() {
+        return brandIds;
+    }
+
+    public void setBrandIds(List<Long> brandIds) {
+        this.brandIds = brandIds;
     }
 }

@@ -30,7 +30,7 @@ public class ProductController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/all")
+    @GetMapping(value = "/all", produces = "application/json")
     public ProductListDto findAll(ProductListParams productListParams) {
         logger.info("Products requested");
         Page<ProductDto> page = productService.findWithFilter(productListParams);
@@ -41,7 +41,7 @@ public class ProductController {
         return productListDto;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = "application/json")
     public ProductDto findById(@PathVariable("id") Long id) {
         logger.info(String.format("Product with id %d requested", id));
         return productService.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));

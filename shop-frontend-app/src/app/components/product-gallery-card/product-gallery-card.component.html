@@ -1,0 +1,19 @@
+<div class="d-flex border rounded-3 border-primary shadow mb-3 p-2" style="min-width: 330px;" *ngFor="let prod of products">
+  <div class="align-self-center me-3">
+    <img style="height: 150px; width: 150px; object-fit: contain;"
+         [attr.src]="prod.mainPictureId ? '/api/v1/picture/' + prod.mainPictureId : '/no_image.png'">
+  </div>
+  <div class="d-flex flex-column w-100">
+    <div class="d-flex flex-nowrap">
+      <h5 class="card-title text-wrap text-break pe-2">{{prod.name}}</h5>
+      <p class="ms-auto text-success">{{prod.cost}}&nbsp;&#8381;</p>
+    </div>
+    <p class="card-text text-truncate flex-fill text-wrap text-break word-break"
+       style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; white-space: normal">
+      {{prod.shortDescription}}</p>
+    <div class="d-flex">
+      <a routerLink="/product/{{prod.id}}" class="btn btn-primary">View</a>
+      <a (click)="addToCart(prod.id)" class="btn btn-primary ms-2">Add to card</a>
+    </div>
+  </div>
+</div>
