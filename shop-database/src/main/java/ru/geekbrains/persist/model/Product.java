@@ -3,7 +3,6 @@ package ru.geekbrains.persist.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -31,11 +30,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Picture> pictures = new ArrayList<>();
 
-    @OneToOne
-    @JoinTable(name = "main_pictures",
-            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "picture_id", referencedColumnName = "id")})
-    private Picture mainPicture;
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private MainPicture mainPicture;
 
     @Column(length = 2048)
     private String description;
@@ -43,27 +40,38 @@ public class Product {
     @Column(name = "short_description")
     private String shortDescription;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetails = new ArrayList<>();
+
     public Product() {
     }
 
-    public Product(Long id, String name, BigDecimal cost, Picture mainPicture) {
+    public Product(Long id) {
         this.id = id;
-        this.name = name;
+    }
+
+    public Product(Long id, BigDecimal cost) {
+        this(id);
         this.cost = cost;
-        this.mainPicture = mainPicture;
+    }
+
+    public Product(Long id, String name, BigDecimal cost) {
+        this(id, cost);
+        this.name = name;
+    }
+
+    public Product(Long id, String name, BigDecimal cost, Picture mainPicture) {
+        this(id, name, cost);
+        this.mainPicture = new MainPicture(this, mainPicture);
     }
 
     public Product(Long id, String name, BigDecimal cost, String shortDescription) {
-        this.id = id;
-        this.name = name;
-        this.cost = cost;
+        this(id, name, cost);
         this.shortDescription = shortDescription;
     }
 
     public Product(Long id, String name, BigDecimal cost, Category category, Brand brand) {
-        this.id = id;
-        this.name = name;
-        this.cost = cost;
+        this(id, name, cost);
         this.category = category;
         this.brand = brand;
     }
@@ -117,11 +125,11 @@ public class Product {
     }
 
     public Picture getMainPicture() {
-        return mainPicture;
+        return mainPicture != null ? mainPicture.getPicture() : null;
     }
 
     public void setMainPicture(Picture mainPicture) {
-        this.mainPicture = mainPicture;
+        this.mainPicture = new MainPicture(this, mainPicture);
     }
 
     public String getDescription() {
@@ -138,5 +146,13 @@ public class Product {
 
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
+    }
+
+    public List<OrderDetail> getOrderProducts() {
+        return orderDetails;
+    }
+
+    public void setOrderProducts(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
     }
 }

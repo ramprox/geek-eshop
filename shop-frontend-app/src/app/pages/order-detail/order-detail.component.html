@@ -1,0 +1,38 @@
+<div class="row py-2">
+
+  <div class="col-md-9 col-xs-12 mb-3">
+    <div class="text-center mb-3">Информация о заказе № {{orderDetails?.orderDto?.id}}</div>
+    <table class="table table-bordered border-primary bg-light">
+      <thead class="bg-primary text-center text-white">
+      <tr>
+        <th scope="col">№</th>
+        <th scope="col">Product name</th>
+        <th scope="col">Count</th>
+        <th scope="col">Price</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      <tr *ngFor="let lineItem of orderDetails?.lineItems; let indexOfElement = index;">
+        <td class="text-center">{{indexOfElement + 1}}</td>
+        <td>{{lineItem.productDto.name}}</td>
+        <td class="text-end">{{lineItem.qty}}</td>
+        <td class="text-end">{{lineItem.itemTotal}}</td>
+      </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-md-3 col-xs-12">
+    <div class="card">
+      <div class="card-body">
+        <h2>Order summary</h2>
+        <p>Создан: {{orderDetails?.orderDto?.createdAt  | date:'dd.MM.yyyy HH:mm:ss'}}</p>
+        <p>Статус: {{orderDetails?.orderDto?.status}}</p>
+        <p>Subtotal: {{orderDetails?.orderDto?.price}}</p>
+      </div>
+    </div>
+  </div>
+
+</div>

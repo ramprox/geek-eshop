@@ -1,7 +1,7 @@
 package ru.geekbrains.service;
 
 import org.springframework.data.domain.Page;
-import ru.geekbrains.controller.ProductListParams;
+import ru.geekbrains.controller.dto.ProductListParams;
 import ru.geekbrains.controller.dto.ProductDto;
 
 import java.util.List;
@@ -13,5 +13,7 @@ public interface ProductService {
 
     Page<ProductDto> findWithFilter(ProductListParams listParams);
 
-    Optional<ProductDto> findById(Long id);
+    Optional<ProductDto> findAllInfoById(Long id);
+
+    Optional<ProductDto> findByIdForCart(Long id);
 }

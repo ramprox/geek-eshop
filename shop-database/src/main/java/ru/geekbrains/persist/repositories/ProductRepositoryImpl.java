@@ -16,6 +16,7 @@ import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ProductRepositoryImpl implements ProductRepositoryCustom {
@@ -36,7 +37,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         Path<String> name = productRoot.get("name");
         Path<BigDecimal> cost = productRoot.get("cost");
         Path<String> shortDescription = productRoot.get("shortDescription");
-        Path<Long> mainPictureId = productRoot.join("mainPicture", JoinType.LEFT).get("id");
+        Path<Long> mainPictureId = productRoot
+                .join("mainPicture", JoinType.LEFT)
+                .get("picture")
+                .get("id");
 
         query.multiselect(id, name, cost, shortDescription, mainPictureId);
         Predicate predicate = spec.toPredicate(productRoot, query, builder);
@@ -75,14 +79,17 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         CriteriaQuery<Tuple> query = builder.createTupleQuery();
         Root<Product> productRoot = query.from(Product.class);
 
-        Join<Product, Category> joinCategory = productRoot.join("category", JoinType.INNER);
-        Join<Product, Brand> joinBrand = productRoot.join("brand", JoinType.INNER);
+        productRoot.join("category", JoinType.INNER);
+        productRoot.join("brand", JoinType.INNER);
 
         Path<Long> id = productRoot.get("id");
         Path<String> name = productRoot.get("name");
         Path<BigDecimal> cost = productRoot.get("cost");
 
-        Path<Long> mainPictureId = productRoot.join("mainPicture", JoinType.LEFT).get("id");
+        Path<Long> mainPictureId = productRoot
+                .join("mainPicture", JoinType.LEFT)
+                .get("picture")
+                .get("id");
 
         query.multiselect(id, name, cost, mainPictureId);
         Predicate predicate = spec.toPredicate(productRoot, query, builder);
@@ -116,5 +123,34 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
         }
         countQuery.select(builderCount.count(countQuery.from(Product.class)));
         return em.createQuery(countQuery).getSingleResult();
+    }
+
+    @Override
+    public Optional<Product> findByIdForCart(Long id) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Product> query = builder.createQuery(Product.class);
+        Root<Product> productRoot = query.from(Product.class);
+
+        Path<Long> pathId = productRoot.get("id");
+        Path<String> pathName = productRoot.get("name");
+        Path<BigDecimal> pathCost = productRoot.get("cost");
+
+        query.multiselect(pathId, pathName, pathCost);
+        query.where(builder.equal(pathId, id));
+
+        return Optional.ofNullable(em.createQuery(query).getSingleResult());
+    }
+
+    @Override
+    public List<Product> findProductIdsWhereIdIn(List<Long> ids) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Product> query = builder.createQuery(Product.class);
+        Root<Product> productRoot = query.from(Product.class);
+
+        Path<Long> pathId = productRoot.get("id");
+        Path<BigDecimal> pathCost = productRoot.get("cost");
+        query.multiselect(pathId, pathCost);
+        query.where(pathId.in(ids));
+        return em.createQuery(query).getResultList();
     }
 }

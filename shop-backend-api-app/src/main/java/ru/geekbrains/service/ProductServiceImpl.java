@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.geekbrains.controller.ProductListParams;
+import ru.geekbrains.controller.dto.ProductListParams;
 import ru.geekbrains.controller.dto.BrandDto;
 import ru.geekbrains.controller.dto.CategoryDto;
 import ru.geekbrains.controller.dto.ProductDto;
@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<ProductDto> findById(Long id) {
+    public Optional<ProductDto> findAllInfoById(Long id) {
         return productRepository.findAllInfoById(id)
                 .map(product -> {
                     BrandDto brandDto = mapToBrandDto(product.getBrand());
@@ -116,5 +116,11 @@ public class ProductServiceImpl implements ProductService {
                     productDto.setDescription(product.getDescription());
                     return productDto;
                 });
+    }
+
+    @Override
+    public Optional<ProductDto> findByIdForCart(Long id) {
+        return productRepository.findByIdForCart(id)
+                .map(product -> new ProductDto(product.getId(), product.getName(), product.getCost()));
     }
 }

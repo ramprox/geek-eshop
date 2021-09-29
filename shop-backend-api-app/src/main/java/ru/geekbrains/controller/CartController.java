@@ -20,7 +20,6 @@ public class CartController {
     private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
     private final CartService cartService;
-
     private final ProductService productService;
 
     @Autowired
@@ -33,7 +32,7 @@ public class CartController {
     public List<LineItem> addToCart(@RequestBody AddLineItemDto addLineItemDto) {
         logger.info("New LineItem. ProductId = {}, qty = {}", addLineItemDto.getProductId(), addLineItemDto.getQty());
 
-        ProductDto productDto = productService.findById(addLineItemDto.getProductId())
+        ProductDto productDto = productService.findByIdForCart(addLineItemDto.getProductId())
                 .orElseThrow(RuntimeException::new);
         cartService.addProductQty(productDto, addLineItemDto.getColor(), addLineItemDto.getMaterial(), addLineItemDto.getQty());
         return cartService.getLineItems();
@@ -51,7 +50,7 @@ public class CartController {
         return new AllCartDto(cartService.getLineItems(), cartService.getSubTotal());
     }
 
-    @DeleteMapping(consumes = "application/json")
+    @DeleteMapping(produces = "application/json", consumes = "application/json")
     public AllCartDto deleteLineItem(@RequestBody LineItem lineItem) {
         logger.info("Delete LineItem. ProductId = {}", lineItem.getProductId());
         cartService.removeProduct(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial());

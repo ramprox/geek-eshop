@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDto> findById(Long id) {
-        return userRepository.findById(id)
+        return userRepository.findFetchRolesById(id)
                 .map(user -> new UserDto(user.getId(),
                         user.getUsername(),
                         user.getAge(),
@@ -80,14 +80,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(UserDto userDto) {
-        User user = new User(
-                userDto.getId(),
-                userDto.getUsername(),
-                passwordEncoder.encode(userDto.getPassword()),
-                userDto.getAge(),
-                userDto.getRoles().stream()
-                        .map(roleDto -> new Role(roleDto.getId(), roleDto.getName()))
-                        .collect(Collectors.toSet()));
+        User user = userRepository.findFetchRolesById(userDto.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setUsername(userDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setAge(userDto.getAge());
+        user.setRoles(userDto.getRoles().stream()
+                .map(roleDto -> new Role(roleDto.getId(), roleDto.getName()))
+                .collect(Collectors.toSet()));
         userRepository.save(user);
     }
 

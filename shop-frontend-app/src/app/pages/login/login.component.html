@@ -1,0 +1,18 @@
+<div class="row" style="height: 90vh;">
+    <form class="p-2 text-center m-auto border border-info rounded shadow bg-light" style="width: 330px;"
+          (submit)="login()">
+      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+      <label for="username" class="sr-only">Login</label>
+      <input type="text" id="username" name="username" [(ngModel)]="credentials.username" class="form-control mb-3"
+             placeholder="Login" required autofocus>
+      <label for="password" class="sr-only">Password</label>
+      <input type="password" id="password" name="password" [(ngModel)]="credentials.password" class="form-control mb-3"
+             placeholder="Password" required>
+      <div class="alert alert-danger" role="alert" *ngIf="isError">
+        Authentication error. Check login and password.
+      </div>
+      <button class="btn btn-primary btn-block mb-3 me-3" type="submit">Sign in</button>
+      <a routerLink="/register">Register</a>
+      <p class="text-muted mb-0">© 2021</p>
+    </form>
+  </div>

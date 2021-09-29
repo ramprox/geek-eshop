@@ -3,6 +3,7 @@ import {CartService} from "../../services/cart.service";
 import {AllCartDto} from "../../model/all-cart-dto";
 import {AddLineItemDto} from "../../model/add-line-item-dto";
 import {LineItem} from "../../model/line-item";
+import {OrderService} from "../../services/order.service";
 
 export const CART_URL = 'cart';
 
@@ -15,7 +16,8 @@ export class CartComponent implements OnInit {
 
   content?: AllCartDto;
 
-  constructor(private cartService: CartService) {
+  constructor(private cartService: CartService,
+              private orderService: OrderService) {
   }
 
   ngOnInit(): void {
@@ -26,12 +28,9 @@ export class CartComponent implements OnInit {
     )
   }
 
-  updateLineItem(inputId: string, lineItem: LineItem) {
-    let input = document.getElementById(inputId) as HTMLInputElement;
-    let newQty = +input.value;
-    if(newQty > 0) {
-      let lineItemQuery = new LineItem(lineItem.productId, lineItem.productDto, newQty, lineItem.color, lineItem.material, lineItem.itemTotal);
-      this.cartService.updateLineItem(lineItemQuery).subscribe(
+  updateLineItem(lineItem: LineItem) {
+    if(lineItem.qty > 0) {
+      this.cartService.updateLineItem(lineItem).subscribe(
         res => {
           this.content = res;
         }
@@ -48,10 +47,22 @@ export class CartComponent implements OnInit {
   }
 
   clearCart() {
-    this.cartService.clearCart().subscribe(
-      res => {
-        this.content = res;
-      }
-    )
+    if(this.content != null && this.content.lineItems.length > 0) {
+      this.cartService.clearCart().subscribe(
+        res => {
+          this.content = res;
+        }
+      )
+    }
+  }
+
+  createOrder() {
+    if(this.content != null && this.content.lineItems.length > 0) {
+      this.orderService.createOrder().subscribe(
+        res => {
+          this.content = undefined;
+        }
+      );
+    }
   }
 }

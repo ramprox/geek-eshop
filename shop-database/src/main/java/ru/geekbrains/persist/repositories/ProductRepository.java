@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.geekbrains.persist.model.Product;
+import ru.geekbrains.persist.projection.ProductSaveOrder;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long>,
@@ -21,7 +23,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
     @Query("select p from Product p " +
             "join fetch p.brand " +
             "join fetch p.category " +
+            "left join fetch p.mainPicture " +
             "left join fetch p.pictures " +
             "where p.id = :id")
     Optional<Product> findAllInfoById(@Param("id") Long id);
+
+    List<ProductSaveOrder> findAllByIdIn(List<Long> ids);
 }

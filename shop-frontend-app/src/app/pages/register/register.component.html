@@ -1,0 +1,63 @@
+<div class="row py-2 justify-content-center" style="height: 90vh;">
+  <div class="col-xs-12 px-0 my-auto" style="width: 330px;">
+
+    <form (submit)="register()" class="border rounded-3 border-primary shadow py-3 px-4 bg-light">
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" [(ngModel)]="registerData.username" class="form-control" id="username" name="username">
+      </div>
+      <div class="alert alert-danger p-0" role="alert" *ngIf="isError && errors?.username">
+        {{errors?.username}}
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" [(ngModel)]="registerData.password" class="form-control" id="password" name="password">
+      </div>
+      <div class="alert alert-danger p-0" role="alert" *ngIf="isError && errors?.password">
+        {{errors?.password}}
+      </div>
+
+      <div class="mb-3">
+        <label for="matchingPassword" class="form-label">Repeat password</label>
+        <input type="password" [(ngModel)]="repeatPassword" class="form-control" id="matchingPassword" name="matchingPassword">
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" [(ngModel)]="registerData.email" class="form-control" id="email" name="email">
+      </div>
+      <div class="alert alert-danger p-0" role="alert" *ngIf="isError && errors?.email">
+        {{errors?.email}}
+      </div>
+
+      <div class="mb-3">
+        <label for="firstName" class="form-label">First name</label>
+        <input type="text" [(ngModel)]="registerData.firstName" class="form-control" id="firstName" name="firstName">
+      </div>
+      <div class="alert alert-danger p-0" role="alert" *ngIf="isError && errors?.firstName">
+        {{errors?.firstName}}
+      </div>
+
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Last name</label>
+        <input type="text" [(ngModel)]="registerData.lastName" class="form-control" id="lastName" name="lastName">
+      </div>
+      <div class="alert alert-danger p-0" role="alert" *ngIf="isError && errors?.lastName">
+        {{errors?.lastName}}
+      </div>
+
+      <div class="mb-3">
+        <label for="birthday" class="form-label">Birthday</label>
+        <input type="date" [(ngModel)]="registerData.birthDay" max="{{date | date:'yyyy-MM-dd'}}" class="form-control" id="birthday" name="birthday">
+      </div>
+      <div class="alert alert-danger p-0" role="alert" *ngIf="isError && errors?.birthDay">
+        {{errors?.birthDay}}
+      </div>
+
+      <button type="submit" class="btn btn-primary me-3">Register</button>
+
+    </form>
+
+  </div>
+</div>

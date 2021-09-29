@@ -40,4 +40,10 @@
     <changeSet id="5000" author="ramprox">
         <tagDatabase tag="v-5.0"/>
     </changeSet>
+
+    <include file="v-6.0/root.changelog.v-6.0.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="6000" author="ramprox">
+        <tagDatabase tag="v-6.0"/>
+    </changeSet>
 </databaseChangeLog>
