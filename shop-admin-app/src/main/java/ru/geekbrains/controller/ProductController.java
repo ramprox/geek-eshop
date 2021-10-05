@@ -15,7 +15,6 @@ import ru.geekbrains.exceptions.NotFoundException;
 import ru.geekbrains.interfaces.BrandService;
 import ru.geekbrains.interfaces.CategoryService;
 import ru.geekbrains.interfaces.ProductService;
-import ru.geekbrains.service.PictureService;
 
 import javax.validation.Valid;
 
@@ -26,19 +25,16 @@ public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final BrandService brandService;
-    private final PictureService pictureService;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @Autowired
     public ProductController(ProductService productService,
                              CategoryService categoryService,
-                             BrandService brandService,
-                             PictureService pictureService) {
+                             BrandService brandService) {
         this.productService = productService;
         this.categoryService = categoryService;
         this.brandService = brandService;
-        this.pictureService = pictureService;
     }
 
     @GetMapping

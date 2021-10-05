@@ -1,0 +1,11 @@
+GET http://localhost:8888/shop-backend-api/dev
+
+###
+
+GET http://localhost:8888/config/application.properties
+
+###
+
+GET http://localhost:8888/aaa/bbb
+
+###

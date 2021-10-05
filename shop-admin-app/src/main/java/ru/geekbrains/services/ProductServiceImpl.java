@@ -14,6 +14,7 @@ import ru.geekbrains.dto.BrandDto;
 import ru.geekbrains.dto.CategoryDto;
 import ru.geekbrains.dto.ProductDto;
 import ru.geekbrains.dto.ProductListParams;
+import ru.geekbrains.exceptions.NotFoundException;
 import ru.geekbrains.interfaces.ProductService;
 import ru.geekbrains.persist.model.Brand;
 import ru.geekbrains.persist.model.Category;
@@ -88,7 +89,8 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllForAdmin(spec,
                 PageRequest.of(Optional.ofNullable(listParams.getPage()).orElse(1) - 1,
                         Optional.ofNullable(listParams.getSize()).orElse(10), sortedBy))
-                .map(product -> new ProductDto(product.getId(), product.getName(), product.getCost(), product.getMainPicture().getId()));
+                .map(product -> new ProductDto(product.getId(), product.getName(), product.getCost(),
+                        product.getMainPicture() != null ? product.getMainPicture().getId() : null));
     }
 
     private static CategoryDto mapToCategoryDto(Category category) {
@@ -110,15 +112,15 @@ public class ProductServiceImpl implements ProductService {
     public void save(ProductDto productDto) {
         CategoryDto categoryDto = productDto.getCategoryDto();
         BrandDto brandDto = productDto.getBrandDto();
-        Product product = new Product(
-                productDto.getId(),
-                productDto.getName(),
-                productDto.getCost(),
-                new Category(categoryDto.getId(), categoryDto.getName()),
-                new Brand(brandDto.getId(), brandDto.getName()));
+        Product product = productRepository.findById(productDto.getId())
+                .orElseThrow(() -> new NotFoundException("Product not found"));
+        product.setName(productDto.getName());
+        product.setCost(productDto.getCost());
+        product.setCategory(new Category(categoryDto.getId(), categoryDto.getName()));
         product.setBrand(new Brand(brandDto.getId(), brandDto.getName()));
         product.setDescription(productDto.getDescription());
         product.setShortDescription(productDto.getShortDescription());
+
         if(productDto.getMainPictureId() != null) {
             product.setMainPicture(pictureService.findById(productDto.getMainPictureId()).get());
         }

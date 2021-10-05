@@ -27,6 +27,10 @@ public class Picture {
     public Picture() {
     }
 
+    public Picture(Long id) {
+        this.id = id;
+    }
+
     public Picture(Long id, String name, String contentType, String storageUUID, Product product) {
         this.id = id;
         this.name = name;

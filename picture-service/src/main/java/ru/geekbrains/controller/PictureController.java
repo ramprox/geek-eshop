@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/picture")
+@RequestMapping("/")
 public class PictureController {
     private final PictureService pictureService;
 
