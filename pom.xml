@@ -34,6 +34,7 @@
         <module>spring-cloud-gateway</module>
         <module>log4jdbc-boot</module>
         <module>picture-service-app</module>
+        <module>shop-delivery-service</module>
     </modules>
 
     <dependencyManagement>

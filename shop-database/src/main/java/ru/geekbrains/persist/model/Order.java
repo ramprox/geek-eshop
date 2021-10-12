@@ -86,6 +86,8 @@ public class Order {
     public enum Status {
         NEW("Новый"),
         PROCESSED("В обработке"),
+        IN_DELIVERY("В пути"),
+        DELIVERED("Доставлен"),
         CLOSED("Закрыт"),
         CANCELED("Отменен");
 

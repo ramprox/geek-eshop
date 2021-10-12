@@ -1,5 +1,9 @@
 package ru.geekbrains.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +19,7 @@ import ru.geekbrains.persist.repositories.OrderRepository;
 import ru.geekbrains.persist.repositories.ProductRepository;
 import ru.geekbrains.persist.repositories.UserRepository;
 import ru.geekbrains.service.dto.LineItem;
+import ru.geekbrains.service.dto.OrderMessage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,14 +31,18 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final RabbitTemplate rabbitTemplate;
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository,
-                            UserRepository userRepository, OrderDetailRepository orderDetailRepository) {
+                            UserRepository userRepository, OrderDetailRepository orderDetailRepository, RabbitTemplate rabbitTemplate) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public List<OrderDto> findOrdersByUsername(String username) {
@@ -62,6 +71,7 @@ public class OrderServiceImpl implements OrderService {
             order.addProduct(product, lineItem.getQty());
         });
         orderRepository.save(order);
+        rabbitTemplate.convertAndSend("order.exchange", "new_order", new OrderMessage(order.getId(), order.getStatus().name()));
     }
 
     @Override
@@ -89,5 +99,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Long id) {
         orderRepository.setOrderStatus(id, Order.Status.CANCELED);
+    }
+
+    @Transactional
+    @RabbitListener(queues = "processed.order.queue")
+    public void receive(OrderMessage order) {
+        orderRepository.setOrderStatus(order.getId(), Order.Status.valueOf(order.getState()));
+        logger.info("Order with id {} change state to {}", order.getId(), order.getState());
     }
 }
