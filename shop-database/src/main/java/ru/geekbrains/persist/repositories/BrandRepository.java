@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BrandRepository extends JpaRepository<Brand, Long> {
     List<Brand> findAllByOrderByName();
+
+    Brand findByName(String name);
 }

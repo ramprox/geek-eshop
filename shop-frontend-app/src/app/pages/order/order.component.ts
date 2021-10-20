@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {OrderService} from "../../services/order.service";
 import {Order} from "../../model/order";
+import {OrderStatusService} from "../../services/order-status.service";
 
 export const ORDERS_URL = 'order';
 
@@ -13,11 +14,20 @@ export class OrderComponent implements OnInit {
 
   orders: Order[] = [];
 
-  constructor(private orderService: OrderService) {
+  constructor(private orderService: OrderService,
+              private orderStatusService: OrderStatusService) {
   }
 
   ngOnInit(): void {
     this.findOrders();
+    this.orderStatusService.onMessage('/order_out/order')
+      .subscribe(msg => {
+        for(var i = 0; i < this.orders.length; i++) {
+          if(this.orders[i].id == msg.id) {
+            this.orders[i].status = msg.state;
+          }
+        }
+      });
   }
 
   private findOrders(): void {
@@ -39,4 +49,6 @@ export class OrderComponent implements OnInit {
           console.log(error);
         })
   }
+
+
 }
