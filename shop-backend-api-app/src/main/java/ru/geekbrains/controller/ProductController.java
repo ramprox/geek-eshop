@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.controller.dto.ProductDto;
 import ru.geekbrains.controller.dto.ProductListDto;
 import ru.geekbrains.controller.dto.ProductListParams;
+import ru.geekbrains.controller.exception.ProductNotFoundException;
 import ru.geekbrains.service.BrandService;
 import ru.geekbrains.service.CategoryService;
 import ru.geekbrains.service.ProductService;
@@ -45,6 +46,6 @@ public class ProductController {
     @GetMapping(value = "/{id}", produces = "application/json")
     public ProductDto findById(@PathVariable("id") Long id) {
         logger.info(String.format("Product with id %d requested", id));
-        return productService.findAllInfoById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        return productService.findAllInfoById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 }

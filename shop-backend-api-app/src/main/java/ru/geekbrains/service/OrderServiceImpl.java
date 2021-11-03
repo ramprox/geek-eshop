@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    @RabbitListener(queues = "processed.order.queue")
+    //@RabbitListener(queues = "processed.order.queue")
     public void receive(OrderMessage order) {
         Order.Status newStatus = Order.Status.valueOf(order.getState());
         orderRepository.setOrderStatus(order.getId(), newStatus);

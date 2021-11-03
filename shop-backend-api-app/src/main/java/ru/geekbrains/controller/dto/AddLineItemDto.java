@@ -13,6 +13,13 @@ public class AddLineItemDto {
     public AddLineItemDto() {
     }
 
+    public AddLineItemDto(Long productId, Integer qty, String color, String material) {
+        this.productId = productId;
+        this.qty = qty;
+        this.color = color;
+        this.material = material;
+    }
+
     public Long getProductId() {
         return productId;
     }

@@ -1,9 +1,10 @@
 package ru.geekbrains.controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +18,6 @@ public class ProductDto {
 
     private String shortDescription;
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
-    @JsonSubTypes({ @JsonSubTypes.Type(name = "BIG_DECIMAL", value = BigDecimal.class) })
     private BigDecimal cost;
 
     private CategoryDto categoryDto;
@@ -34,19 +33,16 @@ public class ProductDto {
 
     public ProductDto(String name, BigDecimal cost) {
         this.name = name;
-        this.cost = cost;
+        this.cost = cost.setScale(2, RoundingMode.HALF_UP);
     }
 
     public ProductDto(Long id, String name, BigDecimal cost) {
+        this(name, cost);
         this.id = id;
-        this.name = name;
-        this.cost = cost;
     }
 
     public ProductDto(Long id, String name, BigDecimal cost, CategoryDto categoryDto) {
-        this.id = id;
-        this.name = name;
-        this.cost = cost;
+        this(id, name, cost);
         this.categoryDto = categoryDto;
     }
 
@@ -82,12 +78,13 @@ public class ProductDto {
         this.shortDescription = shortDescription;
     }
 
+    @JsonSerialize(using = BigDecimalToStringSerializer.class)
     public BigDecimal getCost() {
         return cost;
     }
 
     public void setCost(BigDecimal cost) {
-        this.cost = cost;
+        this.cost = cost.setScale(2, RoundingMode.HALF_UP);
     }
 
     public CategoryDto getCategoryDto() {
