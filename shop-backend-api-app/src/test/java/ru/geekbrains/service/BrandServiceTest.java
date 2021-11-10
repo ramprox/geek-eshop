@@ -8,12 +8,11 @@ import ru.geekbrains.persist.repositories.BrandRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BrandServiceTest {
 
@@ -41,14 +40,15 @@ public class BrandServiceTest {
 
         assertNotNull(resultBrands);
         assertEquals(expectedBrands.size(), resultBrands.size());
-        for(Brand expectedBrand : expectedBrands) {
-            assertTrue(isContain(resultBrands, expectedBrand));
-        }
+        assertEqualsBrands(expectedBrands, resultBrands);
     }
 
-    private static boolean isContain(List<BrandDto> result, Brand brand) {
-        return result.stream()
-                .anyMatch(brandDto -> brandDto.getId().equals(brand.getId())
-                        && brandDto.getName().equals(brand.getName()));
+    private static void assertEqualsBrands(List<Brand> expectedBrands, List<BrandDto> resultBrands) {
+        for(int i = 0; i < expectedBrands.size(); i++) {
+            Brand expectedBrand = expectedBrands.get(i);
+            BrandDto resultBrand = resultBrands.get(i);
+            assertEquals(expectedBrand.getId(), resultBrand.getId());
+            assertEquals(expectedBrand.getName(), resultBrand.getName());
+        }
     }
 }

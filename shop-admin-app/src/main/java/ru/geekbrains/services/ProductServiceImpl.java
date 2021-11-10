@@ -112,8 +112,13 @@ public class ProductServiceImpl implements ProductService {
     public void save(ProductDto productDto) {
         CategoryDto categoryDto = productDto.getCategoryDto();
         BrandDto brandDto = productDto.getBrandDto();
-        Product product = productRepository.findById(productDto.getId())
-                .orElseThrow(() -> new NotFoundException("Product not found"));
+        Product product;
+        if(productDto.getId() == null) {
+            product = new Product();
+        } else {
+            product = productRepository.findById(productDto.getId())
+                    .orElseThrow(() -> new NotFoundException("Product not found"));
+        }
         product.setName(productDto.getName());
         product.setCost(productDto.getCost());
         product.setCategory(new Category(categoryDto.getId(), categoryDto.getName()));

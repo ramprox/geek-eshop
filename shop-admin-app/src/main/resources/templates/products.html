@@ -65,7 +65,7 @@
                             <img th:if="${product.mainPictureId != null}" style="width: 150px; height: 150px; object-fit: contain;"
                                  th:src="@{/picture/{id}(id = ${product.mainPictureId})}"/>
                             <img th:if="${product.mainPictureId == null}" style="width: 150px; height: 150px; object-fit: contain;"
-                                 src="no_image.png"/>
+                                 th:src="@{/images/no_image.png}"/>
                         </td>
                         <td th:text="${product.name}">Name</td>
                         <td th:text="${product.cost}">Cost 1</td>

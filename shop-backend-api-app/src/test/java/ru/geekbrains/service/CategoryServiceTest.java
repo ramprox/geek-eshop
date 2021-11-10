@@ -10,6 +10,7 @@ import ru.geekbrains.persist.repositories.CategoryRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,14 +44,15 @@ public class CategoryServiceTest {
 
         assertNotNull(resultCategories);
         assertEquals(expectedCategories.size(), resultCategories.size());
-        for(Category expectedCategory : expectedCategories) {
-            assertTrue(isContain(resultCategories, expectedCategory));
-        }
+        assertEqualsCategories(expectedCategories, resultCategories);
     }
 
-    private static boolean isContain(List<CategoryDto> result, Category category) {
-        return result.stream()
-                .anyMatch(categoryDto -> categoryDto.getId().equals(category.getId())
-                        && categoryDto.getName().equals(category.getName()));
+    private static void assertEqualsCategories(List<Category> expectedCategories, List<CategoryDto> resultCategories) {
+        for(int i = 0; i < expectedCategories.size(); i++) {
+            Category expectedCategory = expectedCategories.get(i);
+            CategoryDto resultCategory = resultCategories.get(i);
+            assertEquals(expectedCategory.getId(), resultCategory.getId());
+            assertEquals(expectedCategory.getName(), resultCategory.getName());
+        }
     }
 }

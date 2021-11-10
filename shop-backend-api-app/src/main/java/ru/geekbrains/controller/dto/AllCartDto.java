@@ -1,5 +1,7 @@
 package ru.geekbrains.controller.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import ru.geekbrains.service.dto.LineItem;
 
 import java.math.BigDecimal;
@@ -9,6 +11,7 @@ public class AllCartDto {
 
     private List<LineItem> lineItems;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private BigDecimal subtotal;
 
     public AllCartDto() {

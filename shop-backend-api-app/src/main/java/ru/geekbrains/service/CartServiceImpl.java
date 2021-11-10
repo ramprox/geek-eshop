@@ -7,11 +7,9 @@ import org.springframework.stereotype.Service;
 import ru.geekbrains.controller.dto.ProductDto;
 import ru.geekbrains.service.dto.LineItem;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +21,7 @@ public class CartServiceImpl implements CartService {
     private final Map<LineItem, Integer> lineItems;
 
     public CartServiceImpl() {
-        this.lineItems = new HashMap<>();
+        this.lineItems = new LinkedHashMap<>();
     }
 
     @JsonCreator

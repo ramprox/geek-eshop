@@ -9,7 +9,7 @@
       </div>
       <div class="carousel-inner">
         <div class="carousel-item" *ngFor="let pictureId of product?.pictureIds; index as i;" [class.active]="i == 0">
-          <img src='{{"/api/v1/picture/" + pictureId}}' class="d-block w-100" style="height: 500px; object-fit: contain;" alt="...">
+          <img src='{{"/api/v1/picture/picture/" + pictureId}}' class="d-block w-100" style="height: 500px; object-fit: contain;" alt="...">
         </div>
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"

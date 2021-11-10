@@ -1,10 +1,7 @@
 package ru.geekbrains.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +15,7 @@ public class ProductDto {
 
     private String shortDescription;
 
-    private BigDecimal cost;
+    private String cost;
 
     private CategoryDto categoryDto;
 
@@ -31,17 +28,17 @@ public class ProductDto {
     public ProductDto() {
     }
 
-    public ProductDto(String name, BigDecimal cost) {
+    public ProductDto(String name, String cost) {
         this.name = name;
-        this.cost = cost.setScale(2, RoundingMode.HALF_UP);
+        this.cost = cost;
     }
 
-    public ProductDto(Long id, String name, BigDecimal cost) {
+    public ProductDto(Long id, String name, String cost) {
         this(name, cost);
         this.id = id;
     }
 
-    public ProductDto(Long id, String name, BigDecimal cost, CategoryDto categoryDto) {
+    public ProductDto(Long id, String name, String cost, CategoryDto categoryDto) {
         this(id, name, cost);
         this.categoryDto = categoryDto;
     }
@@ -78,13 +75,12 @@ public class ProductDto {
         this.shortDescription = shortDescription;
     }
 
-    @JsonSerialize(using = BigDecimalToStringSerializer.class)
-    public BigDecimal getCost() {
+    public String getCost() {
         return cost;
     }
 
-    public void setCost(BigDecimal cost) {
-        this.cost = cost.setScale(2, RoundingMode.HALF_UP);
+    public void setCost(String cost) {
+        this.cost = cost;
     }
 
     public CategoryDto getCategoryDto() {

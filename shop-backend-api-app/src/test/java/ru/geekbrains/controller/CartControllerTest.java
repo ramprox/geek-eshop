@@ -2,10 +2,7 @@ package ru.geekbrains.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.geekbrains.controller.config.CartControllerTestConfig;
+import ru.geekbrains.controller.config.TestConfig;
 import ru.geekbrains.controller.dto.AddLineItemDto;
 import ru.geekbrains.controller.dto.AllCartDto;
 import ru.geekbrains.controller.dto.ProductDto;
@@ -33,21 +30,27 @@ import ru.geekbrains.service.CartServiceImpl;
 import ru.geekbrains.service.ProductService;
 import ru.geekbrains.service.dto.LineItem;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.geekbrains.Util.assertEqualsLineItems;
 
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Import(CartControllerTestConfig.class)
+@Import(TestConfig.class)
 public class CartControllerTest {
 
     @Autowired
@@ -78,13 +81,38 @@ public class CartControllerTest {
         productRepository.save(new Product(null, "Product2", new BigDecimal(5678), category, brand));
     }
 
+    @BeforeEach
+    public void clearCartService() {
+        cartService.removeAll();
+    }
+
+    @AfterAll
+    public void clearDB(@Autowired ProductRepository productRepository,
+                        @Autowired BrandRepository brandRepository,
+                        @Autowired CategoryRepository categoryRepository,
+                        @Autowired DataSource dataSource) throws SQLException {
+        productRepository.deleteAll();
+        brandRepository.deleteAll();
+        categoryRepository.deleteAll();
+        resetIds(dataSource, "products", "brands", "categories");
+    }
+
+    private void resetIds(DataSource dataSource, String... tables) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            for (String table : tables) {
+                PreparedStatement preparedStatement =
+                        connection.prepareStatement(String.format("ALTER TABLE %s ALTER COLUMN id RESTART WITH 1;", table));
+                preparedStatement.execute();
+            }
+        }
+    }
+
     @Test
     public void testAddToCart() throws Exception {
 
         CartService etalonCartService = new CartServiceImpl();
         ProductDto productDto = productService.findByIdForCart(1L).get();
-        LineItem lineItem = new LineItem(productDto, "color1", "material1");
-        lineItem.setQty(2);
+        LineItem lineItem = new LineItem(productDto, "color1", "material1", 2);
         etalonCartService.addProductQty(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial(), lineItem.getQty());
         List<LineItem> expectedLineItems = etalonCartService.getLineItems();
 
@@ -97,22 +125,14 @@ public class CartControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> {
-                    List<LineItem> resultLineItems = mapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
-                    });
+                    List<LineItem> resultLineItems =
+                            mapper.readValue(mvcResult.getResponse().getContentAsString(),
+                                    new TypeReference<List<LineItem>>() {
+                                    });
                     assertNotNull(resultLineItems);
                     assertEquals(expectedLineItems.size(), resultLineItems.size());
-                    expectedLineItems.forEach(expectedLineItem -> assertTrue(isContain(resultLineItems, expectedLineItem)));
+                    assertEqualsLineItems(expectedLineItems, resultLineItems);
                 });
-
-        cartService.removeAll();
-    }
-
-    private static boolean isContain(List<LineItem> listLineItems, LineItem lineItem) {
-        return listLineItems.stream()
-                .anyMatch(li -> li.equals(lineItem)
-                        && li.getProductDto().getName().equals(lineItem.getProductDto().getName())
-                        && li.getProductDto().getCost().equals(lineItem.getProductDto().getCost())
-                        && li.getQty().equals(lineItem.getQty()));
     }
 
     @Test
@@ -122,8 +142,7 @@ public class CartControllerTest {
         CartService etalonCartService = new CartServiceImpl();
         for (int i = 1; i < 3; i++) {
             ProductDto productDto = productService.findByIdForCart((long) i).get();
-            LineItem lineItem = new LineItem(productDto, "color" + i, "material" + i);
-            lineItem.setQty(i + 1);
+            LineItem lineItem = new LineItem(productDto, "color" + i, "material" + i, i + 1);
             cartService.addProductQty(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial(), lineItem.getQty());
             etalonCartService.addProductQty(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial(), lineItem.getQty());
         }
@@ -136,66 +155,37 @@ public class CartControllerTest {
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> {
                     AllCartDto result = mapper.readValue(mvcResult.getResponse().getContentAsString(), AllCartDto.class);
-                    List<LineItem> resultLineItems = result.getLineItems();
-                    assertNotNull(resultLineItems);
-                    List<LineItem> expectedLineItems = expectedAllCartDto.getLineItems();
-                    assertEquals(expectedLineItems.size(), resultLineItems.size());
-                    expectedLineItems.forEach(expectedLineItem -> assertTrue(isContain(resultLineItems, expectedLineItem)));
-                    BigDecimal resultSubTotal = result.getSubtotal();
-                    assertNotNull(resultSubTotal);
-                    assertEquals(expectedAllCartDto.getSubtotal(), resultSubTotal);
+                    assertEqualsAllCartDtos(expectedAllCartDto, result);
                 });
-
-        cartService.removeAll();
     }
 
     @Test
     public void testDeleteAll() throws Exception {
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        CartService etalonCartService = new CartServiceImpl();
-
         for (int i = 1; i < 3; i++) {
             ProductDto productDto = productService.findByIdForCart((long) i).get();
-            LineItem lineItem = new LineItem(productDto, "color" + i, "material" + i);
-            lineItem.setQty(i + 1);
+            LineItem lineItem = new LineItem(productDto, "color" + i, "material" + i, i + 1);
             cartService.addProductQty(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial(), lineItem.getQty());
-            etalonCartService.addProductQty(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial(), lineItem.getQty());
         }
-
-        AllCartDto expectedAllCartDto = new AllCartDto(etalonCartService.getLineItems(), etalonCartService.getSubTotal());
-
-        mvc.perform(MockMvcRequestBuilders
-                .get("/cart/all")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(mvcResult -> {
-                    AllCartDto result = mapper.readValue(mvcResult.getResponse().getContentAsString(), AllCartDto.class);
-                    List<LineItem> resultLineItems = result.getLineItems();
-                    assertNotNull(resultLineItems);
-                    List<LineItem> expectedLineItems = expectedAllCartDto.getLineItems();
-                    assertEquals(expectedLineItems.size(), resultLineItems.size());
-                });
 
         mvc.perform(MockMvcRequestBuilders
                 .delete("/cart"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.lineItems", hasSize(0)))
-                .andExpect(jsonPath("$.subtotal", is(0)));
+                .andExpect(jsonPath("$.subtotal", is("0")));
     }
 
     @Test
     public void testDeleteLineItem() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         CartService etalonCartService = new CartServiceImpl();
+        int indexDeletingLineItem = 2;
 
         LineItem deletedLineItem = null;
         for (int i = 1; i < 3; i++) {
             ProductDto productDto = productService.findByIdForCart((long) i).get();
-            LineItem lineItem = new LineItem(productDto, "color" + i, "material" + i);
-            lineItem.setQty(i + 1);
-            if (i == 2) {
+            LineItem lineItem = new LineItem(productDto, "color" + i, "material" + i, i + 1);
+            if (i == indexDeletingLineItem) {
                 deletedLineItem = lineItem;
             } else {
                 etalonCartService.addProductQty(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial(), lineItem.getQty());
@@ -212,17 +202,8 @@ public class CartControllerTest {
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> {
                     AllCartDto result = mapper.readValue(mvcResult.getResponse().getContentAsString(), AllCartDto.class);
-                    List<LineItem> resultLineItems = result.getLineItems();
-                    assertNotNull(resultLineItems);
-                    List<LineItem> expectedLineItems = expectedAllCartDto.getLineItems();
-                    assertEquals(expectedLineItems.size(), resultLineItems.size());
-                    expectedLineItems.forEach(expectedLineItem -> assertTrue(isContain(resultLineItems, expectedLineItem)));
-                    BigDecimal resultSubTotal = result.getSubtotal();
-                    assertNotNull(resultSubTotal);
-                    assertEquals(expectedAllCartDto.getSubtotal(), resultSubTotal);
+                    assertEqualsAllCartDtos(expectedAllCartDto, result);
                 });
-
-        cartService.removeAll();
     }
 
     @Test
@@ -232,8 +213,7 @@ public class CartControllerTest {
 
         for (int i = 1; i < 3; i++) {
             ProductDto productDto = productService.findByIdForCart((long) i).get();
-            LineItem lineItem = new LineItem(productDto, "color" + i, "material" + i);
-            lineItem.setQty(i + 1);
+            LineItem lineItem = new LineItem(productDto, "color" + i, "material" + i, i + 1);
             cartService.addProductQty(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial(), lineItem.getQty());
             etalonCartService.addProductQty(lineItem.getProductDto(), lineItem.getColor(), lineItem.getMaterial(), lineItem.getQty());
         }
@@ -250,16 +230,16 @@ public class CartControllerTest {
                 .andExpect(status().isOk())
                 .andDo(mvcResult -> {
                     AllCartDto result = mapper.readValue(mvcResult.getResponse().getContentAsString(), AllCartDto.class);
-                    List<LineItem> resultLineItems = result.getLineItems();
-                    assertNotNull(resultLineItems);
-                    List<LineItem> expectedLineItems = expectedAllCartDto.getLineItems();
-                    assertEquals(expectedLineItems.size(), resultLineItems.size());
-                    expectedLineItems.forEach(expectedLineItem -> assertTrue(isContain(resultLineItems, expectedLineItem)));
-                    BigDecimal resultSubTotal = result.getSubtotal();
-                    assertNotNull(resultSubTotal);
-                    assertEquals(expectedAllCartDto.getSubtotal(), resultSubTotal);
+                    assertEqualsAllCartDtos(expectedAllCartDto, result);
                 });
+    }
 
-        cartService.removeAll();
+    private static void assertEqualsAllCartDtos(AllCartDto expectedAllCartDto, AllCartDto resultAllCartDto) {
+        List<LineItem> resultLineItems = resultAllCartDto.getLineItems();
+        assertNotNull(resultLineItems);
+        List<LineItem> expectedLineItems = expectedAllCartDto.getLineItems();
+        assertEquals(expectedLineItems.size(), resultLineItems.size());
+        assertEqualsLineItems(expectedLineItems, resultLineItems);
+        assertEquals(expectedAllCartDto.getSubtotal(), resultAllCartDto.getSubtotal());
     }
 }

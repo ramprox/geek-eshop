@@ -22,7 +22,9 @@ import ru.geekbrains.persist.repositories.ProductRepository;
 import ru.geekbrains.persist.repositories.UserRepository;
 import ru.geekbrains.service.dto.LineItem;
 import ru.geekbrains.service.dto.OrderMessage;
+import ru.geekbrains.service.util.DateTimeService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,25 +37,28 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDetailRepository orderDetailRepository;
     private final RabbitTemplate rabbitTemplate;
     private final SimpMessagingTemplate template;
+    private final DateTimeService dateTimeService;
 
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository,
                             UserRepository userRepository, OrderDetailRepository orderDetailRepository,
-                            RabbitTemplate rabbitTemplate, SimpMessagingTemplate template) {
+                            RabbitTemplate rabbitTemplate, SimpMessagingTemplate template,
+                            DateTimeService dateTimeService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.rabbitTemplate = rabbitTemplate;
         this.template = template;
+        this.dateTimeService = dateTimeService;
     }
 
     public List<OrderDto> findOrdersByUsername(String username) {
         return orderDetailRepository.findOrdersByUsername(username).stream()
                 .map(order -> new OrderDto(order.getId(),
-                        order.getCreatedAt(), order.getCost(),
+                        order.getCreatedAt().toString(), order.getCost().toString(),
                         order.getStatus().getDescription()))
                 .collect(Collectors.toList());
     }
@@ -67,6 +72,7 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findAllByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Order order = new Order(user, Order.Status.NEW);
+        order.setCreatedAt(dateTimeService.now());
         lineItems.forEach(lineItem -> {
             Product product = products.stream()
                     .filter(prod -> prod.getId().equals(lineItem.getProductId()))
@@ -84,15 +90,15 @@ public class OrderServiceImpl implements OrderService {
         OrderDto orderDto = orderDetailRepository
                 .findOrderByIdAndUsername(id, username)
                 .map(orderInfoBackend -> new OrderDto(orderInfoBackend.getId(),
-                        orderInfoBackend.getCreatedAt(),
-                        orderInfoBackend.getCost(),
+                        orderInfoBackend.getCreatedAt().toString(),
+                        orderInfoBackend.getCost().toString(),
                         orderInfoBackend.getStatus().getDescription()))
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         List<LineItem> orderLineItems = orderDetailRepository.findByOrderId(id).stream()
                 .map(orderDetailBackend -> {
                     ProductDto productDto = new ProductDto(orderDetailBackend.getProductName(),
-                            orderDetailBackend.getCost());
+                            orderDetailBackend.getCost().toString());
                     LineItem lineItem = new LineItem(productDto, "", "");
                     lineItem.setQty(orderDetailBackend.getQty());
                     return lineItem;
@@ -107,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    //@RabbitListener(queues = "processed.order.queue")
+    @RabbitListener(queues = "processed.order.queue")
     public void receive(OrderMessage order) {
         Order.Status newStatus = Order.Status.valueOf(order.getState());
         orderRepository.setOrderStatus(order.getId(), newStatus);

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -131,11 +132,11 @@ public class ImportConfig {
         return f -> f.handle(msg -> {
             String fileName = (String)((AdviceMessage<?>)msg).getInputMessage().getHeaders().get("file_name");
             try {
-                Path handledDirPath = Path.of(handledDir);
+                Path handledDirPath = Paths.get(handledDir);
                 if(!Files.exists(handledDirPath)) {
                     Files.createDirectory(handledDirPath);
                 }
-                Files.move(Path.of(sourceDirPath, fileName), Path.of(handledDir, fileName));
+                Files.move(Paths.get(sourceDirPath, fileName), Paths.get(handledDir, fileName));
             } catch (IOException e) {
                 e.printStackTrace();
             }
