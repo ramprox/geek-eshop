@@ -1,6 +1,6 @@
 INSERT INTO users (age, password, username) VALUES 
-    (33, '$2a$12$MRgkzgogA1Nv05pAL9ViSu2MyDcY2qoqSl5786dy1QBniwZHT00d6', 'admin'),
-    (30, '$2a$10$BNGJaAxeTh1k9SN/62ObyON/DqmYRweJywBcnEW2K/ioqlGY8a9BK', 'user');
+    (33, '$2a$12$EbWwi0ZHGv6jXqTIaX2RUOPFnRKEfyax9y/zvIKz9ZOkdbhuFu.Jy', 'admin'), -- password = admin
+    (30, '$2a$12$BjnoC0fCgs3TsLbG3yepueaMiY4ufcDIfwvvY.m/lvsipxTpil0oS', 'user');  -- password = user
 GO
 
 INSERT INTO roles (name) VALUES ('ROLE_ADMIN'), ('ROLE_USER');

@@ -1,9 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="frontend start" type="js.build_tools.npm">
-    <package-json value="$PROJECT_DIR$/shop-frontend-app/package.json" />
-    <command value="start" />
-    <node-interpreter value="/opt/node/node-v14.17.3-linux-x64/bin/node" />
-    <envs />
-    <method v="2" />
-  </configuration>
-</component>

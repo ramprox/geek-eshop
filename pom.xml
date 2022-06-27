@@ -35,8 +35,6 @@
         <module>log4jdbc-boot</module>
         <module>picture-service-app</module>
         <module>shop-delivery-service</module>
-        <module>spring-integration-demo</module>
-        <module>shop-ui-tests</module>
     </modules>
 
     <dependencyManagement>
