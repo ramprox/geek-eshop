@@ -43,12 +43,11 @@
                         <id>default</id>
                         <goals>
                             <goal>build</goal>
-                            <goal>push</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>registry.heroku.com/geek-${project.artifactId}/web</repository>
+                    <repository>${project.artifactId}</repository>
                     <tag>latest</tag>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>

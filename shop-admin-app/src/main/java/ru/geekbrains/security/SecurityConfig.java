@@ -32,7 +32,7 @@ public class SecurityConfig {
                     .defaultSuccessUrl("/home")
                     .and()
                     .exceptionHandling()
-                    .accessDeniedPage("/access_denied");
+                    .accessDeniedPage("/login");
         }
     }
 }

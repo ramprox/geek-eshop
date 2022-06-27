@@ -52,12 +52,12 @@ public class PictureServiceFileImpl implements PictureService {
     public Optional<byte[]> getPictureDataById(long id) {
         return pictureRepository.findById(id)
                 .map(picture -> Paths.get(storagePath, picture.getStorageUUID()))
-                .filter(path -> Files.exists(path))
+                .filter(Files::exists)
                 .map(path -> {
                     try {
                         return Files.readAllBytes(path);
                     } catch (IOException ex) {
-                        logger.error("Can't read file for picture with id " + id, ex);
+                        logger.error("Can't read file for picture with id {}. {}", id, ex);
                         throw new RuntimeException(ex);
                     }
                 });

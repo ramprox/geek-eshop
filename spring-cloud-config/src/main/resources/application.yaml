@@ -1,0 +1,13 @@
+server:
+  port: 80
+spring:
+  application:
+    name: spring_cloud_server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/ramprox/eshop-config
+          search-paths: '{application}'
+          clone-on-start: true
+          basedir: /apps/eshop-config

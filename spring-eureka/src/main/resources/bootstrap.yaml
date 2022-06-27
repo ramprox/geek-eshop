@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: eureka-server
+  profiles:
+    active: docker
+  cloud:
+    config:
+      uri: http://cloud-config
