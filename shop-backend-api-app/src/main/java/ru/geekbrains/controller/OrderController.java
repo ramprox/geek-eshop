@@ -39,7 +39,7 @@ public class OrderController {
         return orderService.findOrdersByUsername(username);
     }
 
-    @PostMapping(value = "/create", produces = "application/json")
+    @PostMapping(value = "/create")
     public void createOrder(Authentication auth) {
         String username = ((User)auth.getPrincipal()).getUsername();
         logger.info("Create order by user {}", username);

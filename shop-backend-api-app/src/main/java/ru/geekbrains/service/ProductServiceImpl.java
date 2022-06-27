@@ -37,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll().stream()
                 .map(product -> new ProductDto(product.getId(),
                         product.getName(),
-                        product.getCost(),
+                        product.getCost().toString(),
                         mapToCategoryDto(product.getCategory())))
                 .collect(Collectors.toList());
     }
@@ -77,7 +77,8 @@ public class ProductServiceImpl implements ProductService {
                 PageRequest.of(Optional.ofNullable(listParams.getPage()).orElse(1) - 1,
                         Optional.ofNullable(listParams.getSize()).orElse(10), sortedBy))
                 .map(product -> {
-                    ProductDto productDto = new ProductDto(product.getId(), product.getName(), product.getCost());
+                    ProductDto productDto = new ProductDto(product.getId(),
+                            product.getName(), product.getCost().toString());
                     productDto.setShortDescription(product.getShortDescription());
                     Picture mainPicture = product.getMainPicture();
                     if(mainPicture != null) {
@@ -108,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
                     BrandDto brandDto = mapToBrandDto(product.getBrand());
                     ProductDto productDto = new ProductDto(product.getId(),
                             product.getName(),
-                            product.getCost(),
+                            product.getCost().toString(),
                             mapToCategoryDto(product.getCategory()));
                     productDto.setBrandDto(brandDto);
                     productDto.setPictureIds(mapToPictureIds(product.getPictures()));
@@ -121,6 +122,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Optional<ProductDto> findByIdForCart(Long id) {
         return productRepository.findByIdForCart(id)
-                .map(product -> new ProductDto(product.getId(), product.getName(), product.getCost()));
+                .map(product -> new ProductDto(product.getId(),
+                        product.getName(), product.getCost().toString()));
     }
 }

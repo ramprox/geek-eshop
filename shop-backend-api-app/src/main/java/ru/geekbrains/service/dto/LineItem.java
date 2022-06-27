@@ -2,6 +2,8 @@ package ru.geekbrains.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import ru.geekbrains.controller.dto.ProductDto;
 
 import java.io.Serializable;
@@ -27,6 +29,11 @@ public class LineItem implements Serializable {
         this.productDto = productDto;
         this.color = color;
         this.material = material;
+    }
+
+    public LineItem(ProductDto productDto, String color, String material, int qty) {
+        this(productDto, color, material);
+        this.qty = qty;
     }
 
     public LineItem() {
@@ -73,7 +80,7 @@ public class LineItem implements Serializable {
     }
 
     public BigDecimal getItemTotal() {
-        return productDto.getCost().multiply(new BigDecimal(qty));
+        return new BigDecimal(productDto.getCost()).multiply(new BigDecimal(qty));
     }
 
     @Override

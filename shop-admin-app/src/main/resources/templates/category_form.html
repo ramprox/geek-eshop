@@ -16,7 +16,7 @@
                     <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Category name">
                     <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button id="submit" type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>

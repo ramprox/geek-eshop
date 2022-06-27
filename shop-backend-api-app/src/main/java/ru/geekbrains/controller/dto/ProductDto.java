@@ -1,9 +1,7 @@
 package ru.geekbrains.controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +15,7 @@ public class ProductDto {
 
     private String shortDescription;
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
-    @JsonSubTypes({ @JsonSubTypes.Type(name = "BIG_DECIMAL", value = BigDecimal.class) })
-    private BigDecimal cost;
+    private String cost;
 
     private CategoryDto categoryDto;
 
@@ -32,21 +28,18 @@ public class ProductDto {
     public ProductDto() {
     }
 
-    public ProductDto(String name, BigDecimal cost) {
+    public ProductDto(String name, String cost) {
         this.name = name;
         this.cost = cost;
     }
 
-    public ProductDto(Long id, String name, BigDecimal cost) {
+    public ProductDto(Long id, String name, String cost) {
+        this(name, cost);
         this.id = id;
-        this.name = name;
-        this.cost = cost;
     }
 
-    public ProductDto(Long id, String name, BigDecimal cost, CategoryDto categoryDto) {
-        this.id = id;
-        this.name = name;
-        this.cost = cost;
+    public ProductDto(Long id, String name, String cost, CategoryDto categoryDto) {
+        this(id, name, cost);
         this.categoryDto = categoryDto;
     }
 
@@ -82,11 +75,11 @@ public class ProductDto {
         this.shortDescription = shortDescription;
     }
 
-    public BigDecimal getCost() {
+    public String getCost() {
         return cost;
     }
 
-    public void setCost(BigDecimal cost) {
+    public void setCost(String cost) {
         this.cost = cost;
     }
 

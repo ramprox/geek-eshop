@@ -1,23 +1,20 @@
 package ru.geekbrains.controller.dto;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 public class OrderDto {
     private Long id;
-    private LocalDateTime createdAt;
-    private BigDecimal price;
+    private String createdAt;
+    private String price;
     private String status;
 
     public OrderDto() {
     }
 
-    public OrderDto(Long id, LocalDateTime createdAt) {
+    public OrderDto(Long id, String createdAt) {
         this.id = id;
         this.createdAt = createdAt;
     }
 
-    public OrderDto(Long id, LocalDateTime createdAt, BigDecimal price, String status) {
+    public OrderDto(Long id, String createdAt, String price, String status) {
         this(id, createdAt);
         this.price = price;
         this.status = status;
@@ -31,19 +28,19 @@ public class OrderDto {
         this.id = id;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-    public BigDecimal getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

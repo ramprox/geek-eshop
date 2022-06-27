@@ -84,12 +84,12 @@ public class Order {
     }
 
     public enum Status {
-        NEW("Новый"),
-        PROCESSED("В обработке"),
-        IN_DELIVERY("В пути"),
-        DELIVERED("Доставлен"),
-        CLOSED("Закрыт"),
-        CANCELED("Отменен");
+        NEW("New"),
+        PROCESSED("Processed"),
+        IN_DELIVERY("In delivery"),
+        DELIVERED("Delivered"),
+        CLOSED("Closed"),
+        CANCELED("Canceled");
 
         private String description;
 

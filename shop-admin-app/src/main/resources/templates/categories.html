@@ -9,7 +9,7 @@
     <div class="row mb-3 mx-0">
         <div class="col-md-12 p-1">
             <div class="bg-light rounded border border-info p-2 shadow">
-                <a class="btn btn-primary" th:href="@{/category/new}">Add category</a>
+                <a id="addCategoryBtn" class="btn btn-primary" th:href="@{/category/new}">Add category</a>
                 <table class="table table-bordered my-2">
                     <thead class="bg-info">
                     <tr>
@@ -19,9 +19,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${categories.size() > 0}" th:each="category : ${categories}">
+                    <tr th:if="${categories.size() > 0}" th:each="category, iter : ${categories}">
                         <th scope="row" th:text="${category.id}">1</th>
-                        <td th:text="${category.name}">Category 1</td>
+                        <td th:id="${'category' + iter}" th:text="${category.name}">Category 1</td>
                         <td>
                             <a class="btn btn-success" th:href="@{category/{id}(id = ${category.id})}">
                                 <i class="fas fa-edit"></i></a>
