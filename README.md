@@ -115,7 +115,7 @@
 
 <a name="git_clone"><h3>Склонировать репозиторий на локальный компьютер:</h3></a>
 ```
-git clone https://github.com/Geek-Team-Development/market-analyzer
+git clone https://github.com/ramprox/geek-eshop
 ```
 <a name="front-image"><h3>Построить фронтэнд:</h3></a>
 ```
