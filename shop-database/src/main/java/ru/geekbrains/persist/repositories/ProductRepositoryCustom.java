@@ -9,11 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepositoryCustom {
+
     Page<Product> findAllForBackend(Specification<Product> spec, Pageable pageable);
 
     Page<Product> findAllForAdmin(Specification<Product> spec, Pageable pageable);
 
-    Optional<Product> findByIdForCart(Long id);
-
-    List<Product> findProductIdsWhereIdIn(List<Long> ids);
 }

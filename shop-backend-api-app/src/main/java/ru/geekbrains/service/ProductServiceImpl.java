@@ -32,15 +32,15 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
 
-    @Override
-    public List<ProductDto> findAll() {
-        return productRepository.findAll().stream()
-                .map(product -> new ProductDto(product.getId(),
-                        product.getName(),
-                        product.getCost().toString(),
-                        mapToCategoryDto(product.getCategory())))
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<ProductDto> findAll() {
+//        return productRepository.findAll().stream()
+//                .map(product -> new ProductDto(product.getId(),
+//                        product.getName(),
+//                        product.getCost().toString(),
+//                        mapToCategoryDto(product.getCategory())))
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public Page<ProductDto> findWithFilter(ProductListParams listParams) {

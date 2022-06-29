@@ -25,12 +25,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public Order() {
-    }
-
-    public Order(Long id) {
-        this.id = id;
-    }
+    public Order() { }
 
     public Order(User user, Status status) {
         this.user = user;

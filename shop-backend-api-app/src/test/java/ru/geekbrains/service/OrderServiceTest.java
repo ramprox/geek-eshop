@@ -4,19 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.data.projection.ProjectionFactory;
-import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import ru.geekbrains.controller.dto.OrderDto;
 import ru.geekbrains.controller.dto.ProductDto;
-import ru.geekbrains.persist.OrderStatusConverter;
 import ru.geekbrains.persist.model.Order;
 import ru.geekbrains.persist.model.OrderDetail;
 import ru.geekbrains.persist.model.Product;
 import ru.geekbrains.persist.model.User;
-import ru.geekbrains.persist.projection.OrderInfoBackend;
-import ru.geekbrains.persist.projection.ProductSaveOrder;
-import ru.geekbrains.persist.repositories.OrderDetailRepository;
 import ru.geekbrains.persist.repositories.OrderRepository;
 import ru.geekbrains.persist.repositories.ProductRepository;
 import ru.geekbrains.persist.repositories.UserRepository;
@@ -41,7 +35,6 @@ public class OrderServiceTest {
     private OrderRepository orderRepository;
     private ProductRepository productRepository;
     private UserRepository userRepository;
-    private OrderDetailRepository orderDetailRepository;
     private SimpMessagingTemplate template;
     private RabbitTemplate rabbitTemplate;
     private DateTimeService dateTimeService;
@@ -51,7 +44,6 @@ public class OrderServiceTest {
         orderRepository = mock(OrderRepository.class);
         productRepository = mock(ProductRepository.class);
         userRepository = mock(UserRepository.class);
-        orderDetailRepository = mock(OrderDetailRepository.class);
         rabbitTemplate = mock(RabbitTemplate.class);
         template = mock(SimpMessagingTemplate.class);
         dateTimeService = mock(DateTimeService.class);
@@ -59,7 +51,6 @@ public class OrderServiceTest {
                 orderRepository,
                 productRepository,
                 userRepository,
-                orderDetailRepository,
                 rabbitTemplate,
                 template, dateTimeService);
     }
@@ -69,21 +60,19 @@ public class OrderServiceTest {
         String username = "user";
         List<OrderDto> expectedOrderDtos = new ArrayList<>();
         expectedOrderDtos.add(new OrderDto(1L, LocalDateTime.now().toString(), "1234", Order.Status.NEW.getDescription()));
-        expectedOrderDtos.add(new OrderDto(2L, LocalDateTime.now().toString(), "56789", Order.Status.NEW.getDescription()));
+        expectedOrderDtos.add(new OrderDto(2L, LocalDateTime.now().toString(), "1234", Order.Status.NEW.getDescription()));
 
-        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
-        List<OrderInfoBackend> orders = new ArrayList<>();
+        List<Order> orders = new ArrayList<>();
         for (OrderDto orderDto : expectedOrderDtos) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", orderDto.getId());
-            map.put("createdAt", orderDto.getCreatedAt());
-            map.put("status", new OrderStatusConverter().convertToEntityAttribute(orderDto.getStatus()));
-            map.put("cost", orderDto.getPrice());
-            OrderInfoBackend orderInfoBackend = factory.createProjection(OrderInfoBackend.class, map);
-            orders.add(orderInfoBackend);
+            Order order = new Order();
+            order.setId(orderDto.getId());
+            order.setCreatedAt(LocalDateTime.parse(orderDto.getCreatedAt()));
+            order.setStatus(Order.Status.valueOf(orderDto.getStatus().toUpperCase()));
+            order.setProducts(List.of(new OrderDetail(order, new Product(), 1, new BigDecimal("1234"))));
+            orders.add(order);
         }
 
-        when(orderDetailRepository.findOrdersByUsername(username))
+        when(orderRepository.findAllByUsername(username))
                 .thenReturn(orders);
 
         List<OrderDto> result = orderService.findOrdersByUsername(username);
@@ -103,14 +92,12 @@ public class OrderServiceTest {
         lineItem = new LineItem(productDto, "color2", "material2", 5);
         lineItems.add(lineItem);
 
-        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
-        List<ProductSaveOrder> products = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
         for (LineItem li : lineItems) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", li.getProductDto().getId());
-            map.put("cost", li.getProductDto().getCost());
-            ProductSaveOrder orderInfoBackend = factory.createProjection(ProductSaveOrder.class, map);
-            products.add(orderInfoBackend);
+            Product product = new Product();
+            product.setId(li.getProductDto().getId());
+            product.setCost(new BigDecimal(li.getProductDto().getCost()));
+            products.add(product);
         }
         when(productRepository.findAllByIdIn(Arrays.asList(1L, 2L)))
                 .thenReturn(products);

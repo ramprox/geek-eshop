@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ProductService {
 
-    List<ProductDto> findAll();
+//    List<ProductDto> findAll();
 
     Page<ProductDto> findWithFilter(ProductListParams listParams);
 
