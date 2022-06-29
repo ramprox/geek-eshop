@@ -8,11 +8,16 @@
   <div align="center">
     <table border="0">
       <tr>
-        <td width="50%"></td>
-        <td width="50%"></td>
+        <td width="50%"><a href="https://user-images.githubusercontent.com/73485824/176501821-0b632f07-280e-4dfa-95b0-004dc846b8a1.png"><img src="https://user-images.githubusercontent.com/73485824/176501821-0b632f07-280e-4dfa-95b0-004dc846b8a1.png"/></a></td>
+        <td width="50%"><a href="https://user-images.githubusercontent.com/73485824/176502163-064db9fa-9d1f-4523-a5cb-c512d337db3f.png"><img src="https://user-images.githubusercontent.com/73485824/176502163-064db9fa-9d1f-4523-a5cb-c512d337db3f.png"/></a></td>
       </tr>
     </table>
   </div>
+</details>
+<details><summary><h2>Архитектура проекта</h2></summary>
+<div align="center">
+<a href="https://user-images.githubusercontent.com/73485824/176502587-a9babb8d-2f06-4399-ac6b-9e55424f35ff.jpg"><img src="https://user-images.githubusercontent.com/73485824/176502587-a9babb8d-2f06-4399-ac6b-9e55424f35ff.jpg"/></a>
+</div>
 </details>
 <details><summary><h2>Стэк технологий</h2></summary>
    <ul>
