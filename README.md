@@ -102,8 +102,7 @@
 <ul>
 <li><a href="https://hub.docker.com/_/mysql">mysql</a> &ndash; в качестве базы данных;</li>
 <li><a href="https://hub.docker.com/r/bitnami/rabbitmq">bitnami:rabbitmq</a> &ndash; в качестве Message Broker;</li>
-<li><a href="https://hub.docker.com/r/bitnami/redis">redis</a> &ndash; для кеширования результатов запросов пользователей в telegram
-  bot;</li>
+<li><a href="https://hub.docker.com/r/bitnami/redis">redis</a> &ndash; для кеширования корзины;</li>
 <li><a href="https://hub.docker.com/_/nginx">nginx</a>  &ndash; для раздачи статического контента.</li>
 </ul>
 &nbsp;&nbsp;&nbsp;&nbsp;После установки вышеуказанных программ необходимо:
