@@ -76,8 +76,6 @@ public class OrderControllerTest {
 
     @Autowired private OrderRepository orderRepository;
 
-    @Autowired private OrderDetailRepository orderDetailRepository;
-
     @MockBean private DateTimeService dateTimeService;
 
     @BeforeAll
@@ -90,7 +88,6 @@ public class OrderControllerTest {
     @BeforeEach
     public void beforeEach(@Autowired DataSource dataSource) throws SQLException {
         orderRepository.deleteAll();
-        orderDetailRepository.deleteAll();
         resetIds(dataSource, "orders", "order_product");
     }
 
@@ -148,6 +145,7 @@ public class OrderControllerTest {
 
     @WithMockUser(value = "admin", password = "admin", roles = {"ADMIN"})
     @Test
+    @Transactional
     public void testFindOrdersByUserAuthorized() throws Exception {
 
         for (int i = 1; i <= 2; i++) {

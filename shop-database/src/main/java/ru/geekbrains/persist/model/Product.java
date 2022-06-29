@@ -46,18 +46,16 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id) {
+    public Product(Long id, String name, BigDecimal cost) {
         this.id = id;
-    }
-
-    public Product(Long id, BigDecimal cost) {
-        this(id);
+        this.name = name;
         this.cost = cost;
     }
 
-    public Product(Long id, String name, BigDecimal cost) {
-        this(id, cost);
-        this.name = name;
+    public Product(Long id, String name, BigDecimal cost, Long mainPictureId) {
+        this(id, name, cost);
+        Picture picture = new Picture(mainPictureId);
+        setMainPicture(picture);
     }
 
     public Product(Long id, String name, BigDecimal cost, Picture mainPicture) {
@@ -67,6 +65,11 @@ public class Product {
 
     public Product(Long id, String name, BigDecimal cost, String shortDescription) {
         this(id, name, cost);
+        this.shortDescription = shortDescription;
+    }
+
+    public Product(Long id, String name, BigDecimal cost, String shortDescription, Long mainPictureId) {
+        this(id, name, cost, mainPictureId);
         this.shortDescription = shortDescription;
     }
 

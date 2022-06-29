@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,10 +12,9 @@ import ru.geekbrains.controller.dto.OrderDetails;
 import ru.geekbrains.controller.dto.OrderDto;
 import ru.geekbrains.controller.dto.ProductDto;
 import ru.geekbrains.persist.model.Order;
+import ru.geekbrains.persist.model.OrderDetail;
 import ru.geekbrains.persist.model.Product;
 import ru.geekbrains.persist.model.User;
-import ru.geekbrains.persist.projection.ProductSaveOrder;
-import ru.geekbrains.persist.repositories.OrderDetailRepository;
 import ru.geekbrains.persist.repositories.OrderRepository;
 import ru.geekbrains.persist.repositories.ProductRepository;
 import ru.geekbrains.persist.repositories.UserRepository;
@@ -34,7 +32,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final OrderDetailRepository orderDetailRepository;
     private final RabbitTemplate rabbitTemplate;
     private final SimpMessagingTemplate template;
     private final DateTimeService dateTimeService;
@@ -43,22 +40,22 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository,
-                            UserRepository userRepository, OrderDetailRepository orderDetailRepository,
+                            UserRepository userRepository,
                             RabbitTemplate rabbitTemplate, SimpMessagingTemplate template,
                             DateTimeService dateTimeService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
-        this.orderDetailRepository = orderDetailRepository;
         this.rabbitTemplate = rabbitTemplate;
         this.template = template;
         this.dateTimeService = dateTimeService;
     }
 
+    @Override
     public List<OrderDto> findOrdersByUsername(String username) {
-        return orderDetailRepository.findOrdersByUsername(username).stream()
+        return orderRepository.findAllByUsername(username).stream()
                 .map(order -> new OrderDto(order.getId(),
-                        order.getCreatedAt().toString(), order.getCost().toString(),
+                        order.getCreatedAt().toString(), getCost(order.getProducts()).toString(),
                         order.getStatus().getDescription()))
                 .collect(Collectors.toList());
     }
@@ -66,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void createOrder(List<LineItem> lineItems, String username) {
-        List<ProductSaveOrder> products = productRepository.findAllByIdIn(lineItems.stream()
+        List<Product> products = productRepository.findAllByIdIn(lineItems.stream()
                 .map(LineItem::getProductId)
                 .collect(Collectors.toList()));
         User user = userRepository.findAllByUsername(username)
@@ -77,7 +74,12 @@ public class OrderServiceImpl implements OrderService {
             Product product = products.stream()
                     .filter(prod -> prod.getId().equals(lineItem.getProductId()))
                     .findFirst()
-                    .map(productSaveOrder -> new Product(productSaveOrder.getId(), productSaveOrder.getCost()))
+                    .map(productSaveOrder -> {
+                        Product product1 = new Product();
+                        product1.setId(productSaveOrder.getId());
+                        product1.setCost(productSaveOrder.getCost());
+                        return product1;
+                    })
                     .orElseThrow(() -> new RuntimeException("Product not found"));
             order.addProduct(product, lineItem.getQty());
         });
@@ -86,24 +88,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDetails findAllInfoById(Long id, String username) {
-        OrderDto orderDto = orderDetailRepository
-                .findOrderByIdAndUsername(id, username)
-                .map(orderInfoBackend -> new OrderDto(orderInfoBackend.getId(),
-                        orderInfoBackend.getCreatedAt().toString(),
-                        orderInfoBackend.getCost().toString(),
-                        orderInfoBackend.getStatus().getDescription()))
+    public OrderDetails findAllInfoByIdAndUsername(Long id, String username) {
+        return orderRepository
+                .findByIdAndUsername(id, username)
+                .map(order -> {
+                    OrderDto orderDto = new OrderDto(order.getId(),
+                            order.getCreatedAt().toString(),
+                            getCost(order.getProducts()).toString(),
+                            order.getStatus().getDescription());
+                    List<LineItem> orderLineItems = order.getProducts().stream()
+                            .map(orderDetailBackend -> {
+                                ProductDto productDto = new ProductDto(orderDetailBackend.getProduct().getName(),
+                                        orderDetailBackend.getCost().toString());
+                                LineItem lineItem = new LineItem(productDto, "", "");
+                                lineItem.setQty(orderDetailBackend.getQty());
+                                return lineItem;
+                            }).collect(Collectors.toList());
+                    return new OrderDetails(orderDto, orderLineItems);
+                })
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+    }
 
-        List<LineItem> orderLineItems = orderDetailRepository.findByOrderId(id).stream()
-                .map(orderDetailBackend -> {
-                    ProductDto productDto = new ProductDto(orderDetailBackend.getProductName(),
-                            orderDetailBackend.getCost().toString());
-                    LineItem lineItem = new LineItem(productDto, "", "");
-                    lineItem.setQty(orderDetailBackend.getQty());
-                    return lineItem;
-                }).collect(Collectors.toList());
-        return new OrderDetails(orderDto, orderLineItems);
+    private BigDecimal getCost(List<OrderDetail> orderDetails) {
+        return orderDetails.stream()
+                .map(OrderDetail::getCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Transactional

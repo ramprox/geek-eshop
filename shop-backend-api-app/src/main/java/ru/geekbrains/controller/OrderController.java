@@ -7,7 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import ru.geekbrains.controller.dto.AllCartDto;
 import ru.geekbrains.controller.dto.OrderDetails;
 import ru.geekbrains.controller.dto.OrderDto;
 import ru.geekbrains.service.CartService;
@@ -55,7 +54,7 @@ public class OrderController {
     public OrderDetails getOrderDetails(@PathVariable("id") Long id, Authentication auth) {
         String username = ((User)auth.getPrincipal()).getUsername();
         logger.info("Order details with id {} requested", id);
-        return orderService.findAllInfoById(id, username);
+        return orderService.findAllInfoByIdAndUsername(id, username);
     }
 
     @DeleteMapping(consumes = "application/json")
