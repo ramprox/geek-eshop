@@ -41,6 +41,7 @@
       <li>Angular CLI &ndash; v.13.2.6;</li>
       <li>Docker &ndash; v.20.10.12;</li>
       <li>Thymeleaf</li>
+      <li>JUnit 5</li>
    </ul>
 </details>
 <details><summary><h2>Функциональность</h2></summary>
