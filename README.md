@@ -24,22 +24,22 @@
       <li>JDK &ndash; v.11.0.12;</li>
       <li>Maven &ndash; v.3.8.1;</li>
       <li>Spring Boot &ndash; v.2.5.5</li>
-      <li>Spring Data JPA</li>
       <li>Spring Web</li>
-      <li>Spring REST</li>
+      <li>Spring Security</li>
       <li>Spring Сloud Config</li>
       <li>Spring Сloud Eureka</li>
       <li>Spring Сloud Gateway</li>
+      <li>Rest API</li>
+      <li>Spring Data JPA</li>
+      <li>Hibernate</li>
+      <li>MySQL</li>
+      <li>Liquibase</li>
       <li>RabbitMQ</li>
       <li>Redis</li>
-      <li>Hibernate</li>
-      <li>Liquibase</li>
-      <li>MySQL</li>
       <li>NGINX</li>
       <li>Node.js  &ndash; v.16.13.2 (включая npm &ndash; v.8.6.0);</li>
       <li>Angular CLI &ndash; v.13.2.6;</li>
       <li>Docker &ndash; v.20.10.12;</li>
-      <li>Docker-compose &ndash; v.20.10.12;</li>
       <li>Thymeleaf</li>
    </ul>
 </details>
