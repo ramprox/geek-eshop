@@ -19,8 +19,9 @@ import javax.validation.Valid;
 @RequestMapping("/brand")
 public class BrandController {
 
-    private static final Logger logger = LoggerFactory.getLogger(BrandController.class);
     private final BrandService brandService;
+
+    private static final Logger logger = LoggerFactory.getLogger(BrandController.class);
 
     @Autowired
     public BrandController(BrandService brandService) {
@@ -40,11 +41,11 @@ public class BrandController {
     }
 
     @PostMapping
-    public String update(@Valid @ModelAttribute("brand") BrandDto brandDto, BindingResult result, Model model) {
-        logger.info("Saving brand " + brandDto.getId());
+    public String update(@Valid BrandDto brandDto, BindingResult result) {
         if (result.hasErrors()) {
             return "brand_form";
         }
+        logger.info("Saving brand {}", brandDto.getName());
         brandService.save(brandDto);
         return "redirect:/brand";
     }

@@ -20,31 +20,34 @@ import {UnauthorizedInterceptor} from "./helpers/unauthorized-interceptor";
 import { OrderDetailComponent } from './pages/order-detail/order-detail.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavBarComponent,
-    FooterComponent,
-    ProductGalleryComponent,
-    ProductInfoComponent,
-    CartComponent,
-    ProductGalleryCardComponent,
-    PaginationComponent,
-    ProductFilterComponent,
-    LoginComponent,
-    OrderComponent,
-    RegisterComponent,
-    OrderDetailComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
-    HttpClientXsrfModule.withOptions({cookieName: 'XSRF-TOKEN'})
-  ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true }
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        NavBarComponent,
+        FooterComponent,
+        ProductGalleryComponent,
+        ProductInfoComponent,
+        CartComponent,
+        ProductGalleryCardComponent,
+        PaginationComponent,
+        ProductFilterComponent,
+        LoginComponent,
+        OrderComponent,
+        RegisterComponent,
+        OrderDetailComponent,
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule,
+        HttpClientXsrfModule.withOptions({cookieName: 'XSRF-TOKEN'})
+    ],
+    providers: [
+        {provide: HTTP_INTERCEPTORS, useClass: UnauthorizedInterceptor, multi: true}
+    ],
+    exports: [
+        NavBarComponent
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

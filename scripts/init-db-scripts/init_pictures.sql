@@ -1,0 +1,5 @@
+CREATE DATABASE eshop_pictures;
+
+CREATE ROLE pictures WITH LOGIN ENCRYPTED PASSWORD 'pictures';
+
+GRANT ALL PRIVILEGES ON DATABASE eshop_pictures TO pictures;

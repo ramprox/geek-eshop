@@ -1,0 +1,19 @@
+{
+  "/api/v1/products/*": {
+    "target": "http://127.0.0.1:8081",
+    "secure": false,
+    "logLevel": "debug"
+  },
+
+  "/api/v1/pictures/*": {
+    "target": "http://127.0.0.1:8082",
+    "secure": false,
+    "logLevel": "debug"
+  },
+
+  "/api/v1/orders/*": {
+    "target": "http://127.0.0.1:8083",
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

@@ -1,0 +1,22 @@
+<button *ngIf="isRootNode" class="bg-[#00ff00] hover:bg-[#00dd00] mr-2 rounded-md w-10 h-10
+    flex inset-y-0 items-center active:scale-[0.85]" [matMenuTriggerFor]="categoriesMenu" (menuOpened)="getCategories(null)">
+  <i class="fa-solid fa-list mx-auto"></i>
+</button>
+<div class="flex items-center">
+  <button *ngIf="!isRootNode" mat-menu-item [matMenuTriggerFor]="categoriesMenu" (menuOpened)="getCategories(category)"
+          class="text-sm text-white no-underline cursor-pointer pl-3 pr-8 hover:bg-gray-700">{{category?.name}}</button>
+</div>
+<mat-menu #categoriesMenu="matMenu" class="shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none
+                     border border-yellow-300 bg-gray-800 text-left p-0 max-w-full w-full">
+  <div mat-menu-item *ngIf="isLoading" class="flex justify-center items-center">
+    <mat-spinner mode="indeterminate" diameter="24"></mat-spinner>
+  </div>
+  <ng-container *ngFor="let category of categories; let i = index">
+    <button mat-menu-item class="p-0">
+      <app-categories [category]="category" *ngIf="category.hasChilds; else menuItem"></app-categories>
+    </button>
+    <ng-template #menuItem>
+      <button mat-menu-item class="text-sm text-white no-underline cursor-pointer pl-3 pr-8 hover:bg-gray-700">{{category.name}}</button>
+    </ng-template>
+  </ng-container>
+</mat-menu>

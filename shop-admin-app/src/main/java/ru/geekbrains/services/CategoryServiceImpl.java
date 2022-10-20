@@ -1,12 +1,13 @@
 package ru.geekbrains.services;
 
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.geekbrains.dto.CategoryDto;
 import ru.geekbrains.interfaces.CategoryService;
-import ru.geekbrains.persist.model.Category;
-import ru.geekbrains.persist.repositories.CategoryRepository;
+import ru.ramprox.persist.model.Category;
+import ru.ramprox.persist.repositories.CategoryRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,7 +15,10 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
@@ -30,9 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void save(CategoryDto categoryDto) {
-        Category category = new Category();
-        category.setId(categoryDto.getId());
-        category.setName(categoryDto.getName());
+        Category category = modelMapper.map(categoryDto, Category.class);
         categoryRepository.save(category);
     }
 

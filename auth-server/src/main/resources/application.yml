@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eshop_users
+    driver-class-name: org.postgresql.Driver
+    username: users
+    password: users
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+#logging:
+#  level:
+#    root: debug
+#    org.springframework.web: debug
+#    org.springframework.security: debug
+#    org.springframework.security.oauth2: debug
+
+logging:
+  level:
+    jdbc:
+      sqltiming: INFO
+      resultsettable: DEBUG
+      sqlonly: ERROR
+      audit: ERROR
+      resultset: ERROR

@@ -1,0 +1,50 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <include file="db.changelog-1.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="11" author="ramprox">
+        <sqlFile dbms="postgresql"
+                 endDelimiter="\nGO"
+                 path="classpath:/db/changelog/v-1.0/insert-categories-brands-products.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+        <rollback>
+            delete from products;
+            delete from brands;
+            delete from categories;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="12" author="ramprox">
+        <sqlFile dbms="postgresql"
+                 endDelimiter="\nGO"
+                 path="classpath:/db/changelog/v-1.0/insert-product-descriptions.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+        <rollback>
+            update products set full_description = null;
+        </rollback>
+    </changeSet>
+
+    <include file="db.changelog-2.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="15" author="ramprox">
+        <sqlFile dbms="postgresql"
+                 endDelimiter="\nGO"
+                 path="classpath:/db/changelog/v-1.0/add-category-ids.sql"
+                 relativeToChangelogFile="false"
+                 splitStatements="true"
+                 stripComments="true"/>
+        <rollback>
+            update categories set category_id = null where id in (1, 2, 5, 6, 7);
+            delete from categories where id = 10;
+            alter sequence categories_seq_gen restart with 9;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

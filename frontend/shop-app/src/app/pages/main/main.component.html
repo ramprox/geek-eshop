@@ -1,0 +1,37 @@
+<div class="mx-auto max-w-7xl pt-6 sm:px-6 lg:px-8">
+  <div class="relative flex flex-wrap items-stretch w-full min-w-min">
+    <app-categories [isRootNode]="true"></app-categories>
+    <input type="text" [(ngModel)]="searchName" (keyup.enter)="search()"
+           class="w-auto grow border border-[#00ff00] rounded-l-md
+           bg-[#2a2a2a] caret-white text-white p-2"
+           placeholder="Поиск" data-tid="search-input-field"/>
+    <button type="button" (click)="search()" class="block bg-[#00ff00] hover:bg-[#00dd00] w-16 rounded-r-md"
+            data-tid="search-button">
+      <div class="active:scale-[0.85] h-full inset-y-0 items-center flex">
+        <i class="scale-[1.4] fa-solid fa-magnifying-glass mx-auto"></i>
+      </div>
+    </button>
+    <a class="bg-[#00ff00] hover:bg-[#00dd00] rounded-md w-10 h-10
+    flex inset-y-0 items-center ml-2 active:scale-[0.85] cursor-pointer">
+      <i class="fa fa-cart-shopping mx-auto"></i>
+    </a>
+  </div>
+  <div class="text-gray-300 hover:text-white underline underline-offset-2 decoration-dashed
+  cursor-pointer mt-2 w-fit" (click)="side.toggle()">Фильтры</div>
+</div>
+<mat-sidenav-container [hasBackdrop]="true" class="h-screen bg-transparent mx-auto max-w-7xl sm:px-6 lg:px-8 overflow-visible">
+  <mat-sidenav #side mode="over" class="overflow-visible bg-[#2a2a2a] rounded-t-lg w-48 sm:-ml-6 lg:-ml-8">
+    <app-filters #filters></app-filters>
+  </mat-sidenav>
+  <mat-sidenav-content class="overflow-visible">
+    <div *ngIf="products.length > 0" class="h-96">
+      <div class="py-2 flex flex-wrap gap-4">
+        <app-product-card class="mx-auto max-w-[15rem]" *ngFor="let product of products;" [product]="product" data-tid="product-card"></app-product-card>
+      </div>
+      <button class="block w-fit mb-3 p-2 mx-auto border border-yellow-500 rounded-xl active:scale-[0.95]
+                        text-white cursor-pointer bg-[#4a4a4a] hover:scale-105 duration-75">
+        <div class="w-fit tracking-widest" (click)="forwardPage()">Показать еще...</div>
+      </button>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

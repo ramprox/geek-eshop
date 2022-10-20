@@ -1,0 +1,10 @@
+<div class="h-screen bg-transparent mx-auto max-w-7xl sm:px-6 lg:px-8 overflow-visible">
+  <div *ngIf="products.length > 0" class="h-96">
+    <div class="py-2 flex flex-wrap gap-4">
+      <app-product-card class="mx-auto max-w-[15rem]" *ngFor="let product of products;" [product]="product" data-tid="product-card"></app-product-card>
+    </div>
+  </div>
+  <div *ngIf="dataLoaded && products.length == 0">
+    В корзине нет продуктов
+  </div>
+</div>

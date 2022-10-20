@@ -1,11 +1,12 @@
 package ru.geekbrains.services;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.geekbrains.dto.BrandDto;
 import ru.geekbrains.interfaces.BrandService;
-import ru.geekbrains.persist.model.Brand;
-import ru.geekbrains.persist.repositories.BrandRepository;
+import ru.ramprox.persist.model.Brand;
+import ru.ramprox.persist.repositories.BrandRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +15,10 @@ import java.util.stream.Collectors;
 @Service
 public class BrandServiceImpl implements BrandService {
 
-    private BrandRepository brandRepository;
+    private final BrandRepository brandRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     public BrandServiceImpl(BrandRepository brandRepository) {
@@ -30,9 +34,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public void save(BrandDto brandDto) {
-        Brand brand = new Brand();
-        brand.setId(brandDto.getId());
-        brand.setName(brandDto.getName());
+        Brand brand = modelMapper.map(brandDto, Brand.class);
         brandRepository.save(brand);
     }
 

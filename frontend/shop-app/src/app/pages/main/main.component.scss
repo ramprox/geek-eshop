@@ -1,0 +1,42 @@
+::ng-deep {
+  .custom-slider {
+    .ngx-slider {
+      .ngx-slider-pointer {
+        width: 1rem;
+        height: 1rem;
+        top: -6px;
+        background-color: #3A3A3A;
+        border-color: yellow;
+        border-width: 1px;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .custom-slider {
+    .ngx-slider {
+      .ngx-slider-pointer::after {
+        display: none;
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .mat-expansion-panel-body {
+    padding: 0 0.5rem 0.5rem !important;
+  }
+}
+
+::ng-deep {
+  .mat-drawer-inner-container {
+    overflow: visible !important;
+  }
+}
+
+::ng-deep {
+  .mat-drawer-backdrop.mat-drawer-shown {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+  }
+}

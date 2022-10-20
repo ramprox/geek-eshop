@@ -1,0 +1,50 @@
+<div class="h-full">
+  <div class="text-white text-center rounded-t-lg py-2 tracking-widest font-medium bg-gray-800">
+    Фильтры
+  </div>
+  <mat-accordion>
+    <mat-expansion-panel class="bg-[#2a2a2a] shadow-none rounded-none">
+      <mat-expansion-panel-header class="px-3">
+        <mat-panel-title class="tracking-widest text-white">Цена</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="flex py-1">
+        <div class="w-1/2 pr-1">
+          <input class="w-full flex border border-[#00ff00] rounded-md bg-[#1a1a1a] caret-white text-white px-1 text-right"
+                 matInput type="number" [(ngModel)]="productFilter.minPrice">
+        </div>
+        <div class="w-1/2 pl-1">
+          <input class="w-full flex border border-[#00ff00] rounded-md bg-[#1a1a1a] caret-white text-white px-1 text-right"
+                 matInput type="number" [(ngModel)]="productFilter.maxPrice">
+        </div>
+      </div>
+      <div class="custom-slider">
+        <ngx-slider class="text-white mt-5"
+                    [(value)]="minPrice"
+                    [(highValue)]="maxPrice"
+                    [options]="options"
+                    (valueChange)="minPriceChanged()"
+                    (highValueChange)="maxPriceChanged()">
+        </ngx-slider>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <mat-accordion>
+    <mat-expansion-panel class="bg-[#2a2a2a] shadow-none rounded-none text-white"
+                         (afterExpand)="getBrands()">
+      <mat-expansion-panel-header class="px-3">
+        <mat-panel-title class="tracking-widest text-white">Брэнды</mat-panel-title>
+      </mat-expansion-panel-header>
+      <ul>
+        <li *ngFor="let brandCheckBox of brands">
+          <mat-checkbox [value]="brandCheckBox.brand.id.toString()" (change)="checkedChanged($event)">
+            {{brandCheckBox.brand.name}}
+          </mat-checkbox>
+        </li>
+      </ul>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <button class="block w-fit mb-3 p-2 mx-auto border border-yellow-500 rounded-xl active:scale-[0.95]
+                        text-white cursor-pointer bg-[#3a3a3a] hover:scale-105">
+    <div class="w-fit tracking-widest">Применить</div>
+  </button>
+</div>

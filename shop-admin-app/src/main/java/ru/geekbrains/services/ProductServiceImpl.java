@@ -1,7 +1,7 @@
 package ru.geekbrains.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,14 +14,13 @@ import ru.geekbrains.dto.BrandDto;
 import ru.geekbrains.dto.CategoryDto;
 import ru.geekbrains.dto.ProductDto;
 import ru.geekbrains.dto.ProductListParams;
-import ru.geekbrains.exceptions.NotFoundException;
 import ru.geekbrains.interfaces.ProductService;
-import ru.geekbrains.persist.model.Brand;
-import ru.geekbrains.persist.model.Category;
-import ru.geekbrains.persist.model.Picture;
-import ru.geekbrains.persist.model.Product;
-import ru.geekbrains.persist.repositories.ProductRepository;
-import ru.geekbrains.persist.specifications.ProductSpecifications;
+import ru.ramprox.persist.model.Brand;
+import ru.ramprox.persist.model.Category;
+import ru.ramprox.persist.model.Picture;
+import ru.ramprox.persist.model.Product;
+import ru.ramprox.persist.repositories.ProductRepository;
+import ru.ramprox.persist.specifications.ProductSpecifications;
 import ru.geekbrains.service.PictureService;
 
 
@@ -32,12 +31,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+
     private final PictureService pictureService;
 
-    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, PictureService pictureService) {
@@ -50,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll().stream()
                 .map(product -> new ProductDto(product.getId(),
                         product.getName(),
-                        product.getCost(),
+                        product.getPrice(),
                         mapToCategoryDto(product.getCategory())))
                 .collect(Collectors.toList());
     }
@@ -68,10 +70,10 @@ public class ProductServiceImpl implements ProductService {
             spec = spec.and(ProductSpecifications.productNamePrefix(productNameFilter));
         }
         if(minCostFilter != null) {
-            spec = spec.and(ProductSpecifications.minCost(minCostFilter));
+            spec = spec.and(ProductSpecifications.minPrice(minCostFilter));
         }
         if(maxCostFilter != null) {
-            spec = spec.and(ProductSpecifications.maxCost(maxCostFilter));
+            spec = spec.and(ProductSpecifications.maxPrice(maxCostFilter));
         }
         if(categoryId != null && categoryId >= 0) {
             spec = spec.and(ProductSpecifications.productCategory(categoryId));
@@ -86,11 +88,12 @@ public class ProductServiceImpl implements ProductService {
         Sort sortedBy = sortBy != null && !sortBy.isEmpty() ? Sort.by(sortBy) : Sort.by("id");
         sortedBy = "desc".equals(listParams.getDirection()) ? sortedBy.descending() : sortedBy.ascending();
 
-        return productRepository.findAllForAdmin(spec,
-                PageRequest.of(Optional.ofNullable(listParams.getPage()).orElse(1) - 1,
-                        Optional.ofNullable(listParams.getSize()).orElse(10), sortedBy))
-                .map(product -> new ProductDto(product.getId(), product.getName(), product.getCost(),
-                        product.getMainPicture() != null ? product.getMainPicture().getId() : null));
+        return null;
+//        return productRepository.findAll(spec,
+//                PageRequest.of(Optional.ofNullable(listParams.getPage()).orElse(1) - 1,
+//                        Optional.ofNullable(listParams.getSize()).orElse(10), sortedBy))
+//                .map(product -> new ProductDto(product.getId(), product.getName(), product.getPrice(),
+//                        product.getMainPicture() != null ? product.getMainPicture().getId() : null));
     }
 
     private static CategoryDto mapToCategoryDto(Category category) {
@@ -110,51 +113,31 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void save(ProductDto productDto) {
-        CategoryDto categoryDto = productDto.getCategoryDto();
-        BrandDto brandDto = productDto.getBrandDto();
-        Product product;
-        if(productDto.getId() == null) {
-            product = new Product();
-        } else {
-            product = productRepository.findById(productDto.getId())
-                    .orElseThrow(() -> new NotFoundException("Product not found"));
-        }
-        product.setName(productDto.getName());
-        product.setCost(productDto.getCost());
-        product.setCategory(new Category(categoryDto.getId(), categoryDto.getName()));
-        product.setBrand(new Brand(brandDto.getId(), brandDto.getName()));
-        product.setDescription(productDto.getDescription());
-        product.setShortDescription(productDto.getShortDescription());
-
+        Product product = modelMapper.map(productDto, Product.class);
         if(productDto.getMainPictureId() != null) {
-            product.setMainPicture(pictureService.findById(productDto.getMainPictureId()).get());
-        }
 
+        }
         List<Long> pictureIds = productDto.getPictureIds();
         List<Picture> pictures = pictureService.findByProductId(productDto.getId());
-
         try {
             for (Picture picture : pictures) {
                 if (pictureIds.contains(picture.getId())) {
-                    product.getPictures().add(picture);
+
                 } else {
                     pictureService.deleteById(picture.getId());
                 }
             }
         } catch (IOException ex) {
-            logger.info("Can't delete file", ex);
+            log.info("Can't delete file", ex);
             throw new RuntimeException(ex);
         }
-
         if(productDto.getNewPictures() != null) {
             for(MultipartFile newPicture : productDto.getNewPictures()) {
                 try {
                     if (newPicture.getBytes().length > 0) {
-                        product.getPictures().add(new Picture(null,
-                                newPicture.getOriginalFilename(),
-                                newPicture.getContentType(),
-                                pictureService.createPicture(newPicture.getBytes()),
-                                product));
+                        Picture picture = new Picture(pictureService.createPicture(newPicture.getBytes()),
+                                newPicture.getContentType(), product);
+                        picture.setName(newPicture.getOriginalFilename());
                     }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -166,23 +149,24 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Optional<ProductDto> findById(Long id) {
-        return productRepository.findAllInfoById(id)
-                .map(product -> {
-                    BrandDto brandDto = mapToBrandDto(product.getBrand());
-                    ProductDto productDto = new ProductDto(product.getId(),
-                            product.getName(),
-                            product.getCost(),
-                            mapToCategoryDto(product.getCategory()));
-                    productDto.setBrandDto(brandDto);
-                    productDto.setPictureIds(mapToPictureIds(product.getPictures()));
-                    productDto.setDescription(product.getDescription());
-                    productDto.setShortDescription(product.getShortDescription());
-                    Picture mainPicture = product.getMainPicture();
-                    if(mainPicture != null) {
-                        productDto.setMainPictureId(mainPicture.getId());
-                    }
-                    return productDto;
-                });
+//        return productRepository.findById(id)
+//                .map(product -> {
+//                    BrandDto brandDto = mapToBrandDto(product.getBrand());
+//                    ProductDto productDto = new ProductDto(product.getId(),
+//                            product.getName(),
+//                            product.getPrice(),
+//                            mapToCategoryDto(product.getCategory()));
+//                    productDto.setBrandDto(brandDto);
+//                    productDto.setPictureIds(mapToPictureIds(product.getPictures()));
+//                    productDto.setDescription(product.getDescription());
+//                    productDto.setShortDescription(product.getShortDescription());
+//                    Picture mainPicture = product.getMainPicture();
+//                    if(mainPicture != null) {
+//                        productDto.setMainPictureId(mainPicture.getId());
+//                    }
+//                    return productDto;
+//                });
+        return null;
     }
 
     @Override

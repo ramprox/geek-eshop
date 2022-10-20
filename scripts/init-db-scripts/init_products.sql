@@ -1,0 +1,5 @@
+CREATE DATABASE eshop_products;
+
+CREATE ROLE products WITH LOGIN ENCRYPTED PASSWORD 'products';
+
+GRANT ALL PRIVILEGES ON DATABASE eshop_products TO products;

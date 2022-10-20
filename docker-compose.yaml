@@ -1,78 +1,113 @@
 version: '3'
 services:
-  nginx:
-    image: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./shop-frontend-app/dist/shop-frontend-app:/var/opt/eshop
-      - ./nginx.config:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - shop-admin-app
-      - shop-gateway
-
-  cloud-config:
-    image: spring-cloud-config
-    ports:
-    - "80"
-
-  eureka-service:
-    image: spring-eureka
-    ports:
-      - "80"
-
-  shop-gateway:
-    image: spring-cloud-gateway
-    ports:
-      - "80"
-
-  shop-admin-app:
-    image: shop-admin-app
-    ports:
-    - "80"
-    volumes:
-      - ${HOME}/eshop/pictures:/apps/pictures
-    depends_on:
-      - cloud-config
-
-  shop-picture-app:
-    image: picture-service-app
-    ports:
-    - "80"
-    volumes:
-      - ${HOME}/eshop/pictures:/apps/pictures
-
-  shop-backend-app:
-    image: shop-backend-api-app
-    ports:
-      - "80"
-
-  shop-delivery:
-    image: shop-delivery-service
-    ports:
-      - "80"
-
   db:
-    image: mysql
+    image: postgres
+    restart: always
     environment:
-      MYSQL_USER: "spring"
-      MYSQL_PASSWORD: "spring"
-      MYSQL_DATABASE: "geek_eshop"
-      MYSQL_ROOT_PASSWORD: "spring"
+      POSTGRES_PASSWORD: spring
     ports:
-      - "3306"
+      - "5432:5432"
     volumes:
-      - mysql-data:/var/lib/mysql
-
-  rabbitmq:
-    image: 'bitnami/rabbitmq:latest'
-    ports:
-    - "5672"
-
-  redis:
-    image: redis:latest
-    ports:
-    - "6379"
+      - ./scripts/init-db-scripts:/docker-entrypoint-initdb.d
+      - postgres-test:/var/lib/postgresql/data
 
 volumes:
-  mysql-data:
+  postgres-test:
+#  nginx:
+#    image: nginx
+#    ports:
+#      - "80:80"
+#    volumes:
+#      - ${HOME}/eshop/nginx/shared:/var/opt/eshop
+#      - ./nginx.config:/etc/nginx/conf.d/default.conf
+#    depends_on:
+#      - shop-admin-app
+#      - shop-gateway
+#
+#  cloud-config:
+#    image: spring-cloud-config
+#    ports:
+#    - "80"
+#
+#  eureka-service:
+#    image: spring-eureka
+#    ports:
+#      - "80"
+#
+#  shop-gateway:
+#    image: spring-cloud-gateway
+#    ports:
+#      - "80"
+#
+#  shop-admin-app:
+#    image: shop-admin-app
+#    ports:
+#    - "80"
+#    volumes:
+#      - ${HOME}/eshop/pictures:/apps/pictures
+#    depends_on:
+#      - cloud-config
+#
+#  shop-picture-app:
+#    image: picture-service-app
+#    ports:
+#    - "80"
+#    volumes:
+#      - ${HOME}/eshop/pictures:/apps/pictures
+#
+#  shop-backend-app:
+#    image: shop-backend-api-app
+#    ports:
+#      - "80"
+#
+#  shop-delivery:
+#    image: shop-delivery-service
+#    ports:
+#      - "80"
+
+#  keycloak:
+#    image: jboss/keycloak
+#    environment:
+#      KEYCLOAK_USER: "admin"
+#      KEYCLOAK_PASSWORD: "admin"
+#      DB_VENDOR: mysql
+#      DB_ADDR: db
+#      DB_PORT: 3306
+#      DB_DATABASE: eshop_users
+#      DB_USER: "keycloak"
+#      DB_PASSWORD: "keycloak"
+#      KEYCLOAK_IMPORT: /tmp/eshop-realm.json
+#    depends_on:
+#      - db
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./wait-service.sh:/wait-service.sh
+#      - ./config.cli:/opt/jboss/startup-scripts/config.cli
+#      - ./eshop-realm.json:/tmp/eshop-realm.json
+#    entrypoint: ["/bin/bash"]
+#    command: -c '/wait-service.sh MySQL db 3306 && /opt/jboss/tools/docker-entrypoint.sh -b 0.0.0.0'
+
+#  db:
+#    image: mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: "spring"
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - ./scripts/init-db-scripts:/docker-entrypoint-initdb.d
+#      - mysql-data:/var/lib/mysql
+#    restart: always
+
+#  rabbitmq:
+#    image: 'bitnami/rabbitmq:latest'
+#    ports:
+#    - "5672:5672"
+#
+#  redis:
+#    image: redis:latest
+#    ports:
+#    - "6379:6379"
+
+#volumes:
+#  mysql-data:

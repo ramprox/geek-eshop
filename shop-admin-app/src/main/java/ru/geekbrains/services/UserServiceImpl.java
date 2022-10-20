@@ -1,5 +1,6 @@
 package ru.geekbrains.services;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -7,10 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.geekbrains.dto.*;
 import ru.geekbrains.interfaces.UserService;
-import ru.geekbrains.persist.model.Role;
-import ru.geekbrains.persist.model.User;
-import ru.geekbrains.persist.repositories.UserRepository;
-import ru.geekbrains.persist.specifications.UserSpecifications;
+import ru.ramprox.persist.model.User;
+import ru.ramprox.persist.repositories.UserRepository;
+import ru.ramprox.persist.specifications.UserSpecifications;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,6 +20,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
@@ -66,28 +69,19 @@ public class UserServiceImpl implements UserService {
                 PageRequest.of(
                         Optional.ofNullable(userListParams.getPage()).orElse(1) - 1,
                         Optional.ofNullable(userListParams.getSize()).orElse(3), sortedBy))
-                .map(user -> new UserDto(user.getId(), user.getUsername(), user.getAge(), null));
+                .map(user -> modelMapper.map(user, UserDto.class));
     }
 
     @Override
     public Optional<UserDto> findById(Long id) {
-        return userRepository.findFetchRolesById(id)
-                .map(user -> new UserDto(user.getId(),
-                        user.getUsername(),
-                        user.getAge(),
-                        mapRolesDto(user)));
+        return userRepository.findWithRolesById(id)
+                .map(user -> modelMapper.map(user, UserDto.class));
     }
 
     @Override
     public void save(UserDto userDto) {
-        User user = userRepository.findFetchRolesById(userDto.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setUsername(userDto.getUsername());
+        User user = modelMapper.map(userDto, User.class);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setAge(userDto.getAge());
-        user.setRoles(userDto.getRoles().stream()
-                .map(roleDto -> new Role(roleDto.getId(), roleDto.getName()))
-                .collect(Collectors.toSet()));
         userRepository.save(user);
     }
 
@@ -96,9 +90,4 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    private static Set<RoleDto> mapRolesDto(User user) {
-        return user.getRoles().stream()
-                .map(role -> new RoleDto(role.getId(), role.getName()))
-                .collect(Collectors.toSet());
-    }
 }

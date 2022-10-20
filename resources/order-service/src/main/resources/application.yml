@@ -1,0 +1,72 @@
+server:
+  port: 8083
+
+authService:
+  baseUrl: http://localhost:8080
+
+productService:
+  baseUrl: http://localhost:8081
+  productGetUrl: /api/v1/products/product/{id}
+
+spring:
+  webflux:
+    base-path: /api/v1/orders
+  datasource:
+    url: jdbc:mysql://localhost:3306/eshop_orders
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: orders
+    password: orders
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  security:
+    oauth2:
+      client:
+        registration:
+          eshop-orders-oidc:
+            provider: spring
+            client-id: eshop-orders
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8083/login/oauth2/code/eshop-orders-oidc"
+            scope: openid
+            client-name: eshop-orders-oidc
+        provider:
+          spring:
+            issuer-uri: ${authService.baseUrl}
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: user
+    password: bitnami
+  redis:
+    host: localhost
+    port: 6379
+
+log4jdbc:
+  drivers: ${spring.datasource.driver-class-name}
+  auto:
+    load:
+      popular:
+        drivers: false
+
+logging:
+  level:
+    jdbc:
+      sqltiming: INFO
+      resultsettable: DEBUG
+      sqlonly: ERROR
+      audit: ERROR
+      resultset: ERROR
+
+#logging:
+#  level:
+#    root: debug
+#    org.springframework.web: debug
+#    org.springframework.security: debug
+#    org.springframework.security.oauth2: debug

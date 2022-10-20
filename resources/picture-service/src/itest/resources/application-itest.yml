@@ -1,0 +1,51 @@
+testcontainers:
+  dbProvider: postgres
+  host: localhost
+  port: 5432
+  dbName: eshop_products
+  imageName: ${testcontainers.dbProvider}:latest
+
+autoclean:
+  tables: pictures
+  sequences: pictures_seq_gen
+
+spring:
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://${testcontainers.host}:${testcontainers.port}/${testcontainers.dbName}?createDatabaseIfNotExists=true
+    driver-class-name: org.postgresql.Driver
+    username: pictures
+    password: pictures
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        show_sql: false
+    hibernate:
+      ddl-auto: create-drop
+  liquibase:
+    enabled: false
+
+log4jdbc:
+  drivers: ${spring.datasource.driver-class-name}
+  auto:
+    load:
+      popular:
+        drivers: false
+
+logging:
+  level:
+    jdbc:
+      sqltiming: INFO
+      resultsettable: DEBUG
+      sqlonly: ERROR
+      audit: ERROR
+      resultset: ERROR
+#    root: debug
+#    org.springframework.web: debug
+#    org.springframework.security: debug
+#    org.springframework.security.oauth2: debug

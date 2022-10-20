@@ -37,7 +37,7 @@
                             <option th:each="brand : ${brands}"
                                     th:text="${brand.name}"
                                     th:value="${brand.id} + ';' + ${brand.name}"
-                                    th:selected="${brand.equals(product.brandDto)}"></option>
+                                    th:selected="${brand.getId == product.brandDto.getId()}"></option>
                         </select>
                     </div>
                 </div>
